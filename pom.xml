@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+    xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+      http://maven.apache.org/POM/4.0.0 
+      http://maven.apache.org/xsd/maven-4.0.0.xsd
+    ">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.govnoslav</groupId>
+  <artifactId>itemfix</artifactId>
+  <version>1.4.0</version>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <!-- Подставьте номер билда, который у вас скачан -->
+    <paper.build>237</paper.build>
+    <paper.api.version>1.21.5-R0.1-SNAPSHOT</paper.api.version>
+    <spigot.version>1.21.5-${paper.build}</spigot.version>
+  </properties>
+
+  <!-- 1) Репозиторий PaperMC, чтобы взять paper-api и remapped spigot -->
+  <repositories>
+    <repository>
+      <id>papermc-public</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+  <!-- Paper API для org.bukkit.* -->
+  <dependency>
+    <groupId>io.papermc.paper</groupId>
+    <artifactId>paper-api</artifactId>
+    <version>1.21.5-R0.1-SNAPSHOT</version>
+    <scope>provided</scope>
+  </dependency>
+
+  <!-- Spigot, локально собранный через BuildTools -->
+  <dependency>
+    <groupId>org.spigotmc</groupId>
+    <artifactId>spigot</artifactId>
+    <version>1.21.5-R0.1-SNAPSHOT</version>
+    <scope>provided</scope>
+  </dependency>
+</dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+          <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

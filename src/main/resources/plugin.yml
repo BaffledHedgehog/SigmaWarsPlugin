@@ -1,0 +1,28 @@
+name: lws
+main: com.govnoslav.SigmaWarsMain
+load: POSTWORLD
+version: 1.1
+api-version: 1.21
+description: Lucky Wars Baffled Eblan Chorn Pild ZV Goida plugin 52 666 sigma
+authors: [GovnoSlav]
+softdepend: []
+commands:
+  reload:
+    usage: /reload
+    permission: itemfix.reload
+  rotatemap:
+    description: "Повернуть куб 320×320×320 вокруг X"
+    usage: "/rotatemap"
+    permission: rotatemap.use
+  regen:
+    description: Управление регенерацией
+    usage: /regen <add|set|multiple> <value> <selector> [duration, 0 for infinite]
+    permission: sigmawars.regen
+permissions:
+  itemfix.reload:
+    default: op
+  rotatemap.use:
+    description: "Позволяет использовать команду /rotatemap"
+    default: op
+  sigmawars.regen:
+    default: op
