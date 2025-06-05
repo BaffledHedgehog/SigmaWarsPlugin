@@ -37,6 +37,12 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        //////////////
+
+        MotionCommand motionHandler = new MotionCommand(this);
+        getCommand("motion").setExecutor(motionHandler);
+        getCommand("motion").setTabCompleter(motionHandler);
+
         // regeneration
         // 1) создаём экземпляр Regeneration, передаём this (JavaPlugin)
         regenHandler = new Regeneration(this);

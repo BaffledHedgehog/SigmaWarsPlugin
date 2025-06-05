@@ -18,6 +18,10 @@ commands:
     description: Управление регенерацией
     usage: /regen <add|set|multiple> <value> <selector> [duration, 0 for infinite]
     permission: sigmawars.regen
+  motion:
+    description: Управление вектором Motion у сущностей
+    usage: /motion <set|add> <x> <y> <z> <цели>  или  /motion multiple <scalar> <цели>
+    permission: sigmawars.motion
 permissions:
   itemfix.reload:
     default: op
@@ -25,4 +29,6 @@ permissions:
     description: "Позволяет использовать команду /rotatemap"
     default: op
   sigmawars.regen:
+    default: op
+  sigmawars.motion:
     default: op
