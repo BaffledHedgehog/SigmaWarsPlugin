@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,6 +19,9 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.govnoslav.item.MetalPipe;
+
 
 public class SigmaWarsMain extends JavaPlugin implements Listener {
 
@@ -38,10 +42,16 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         //////////////
+        // 1) Регистрируем ItemSpawn
+        // Регистрируем слушатель и запускаем логику metal_pipe
+        MetalPipe metalPipe = new MetalPipe(this);
+        getServer().getPluginManager().registerEvents(metalPipe, this);
 
-        MotionCommand motionHandler = new MotionCommand(this);
-        getCommand("motion").setExecutor(motionHandler);
-        getCommand("motion").setTabCompleter(motionHandler);
+        // MotionCommand motionHandler = new MotionCommand(this);
+        // getCommand("motion").setExecutor(motionHandler);
+        // getCommand("motion").setTabCompleter(motionHandler);
+        Objects.requireNonNull(getCommand("motion")).setExecutor(new MotionCommand());
+        Objects.requireNonNull(getCommand("motion")).setTabCompleter(new MotionCommand());
 
         // regeneration
         // 1) создаём экземпляр Regeneration, передаём this (JavaPlugin)

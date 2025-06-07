@@ -11,60 +11,119 @@
   <groupId>com.govnoslav</groupId>
   <artifactId>itemfix</artifactId>
   <version>1.4.0</version>
+  <packaging>jar</packaging>
 
   <properties>
+    <!-- Java 17 -->
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <!-- Подставьте номер билда, который у вас скачан -->
-    <paper.build>237</paper.build>
+
+    <!-- Paper API -->
     <paper.api.version>1.21.5-R0.1-SNAPSHOT</paper.api.version>
-    <spigot.version>1.21.5-${paper.build}</spigot.version>
+
+    <!-- Жёстко фиксируем ту версию mixin-bundle, которая точно есть -->
+    <mixin.version>0.8.7</mixin.version>
   </properties>
 
-  <!-- 1) Репозиторий PaperMC, чтобы взять paper-api и remapped spigot -->
+  <!-- Репозитории -->
   <repositories>
     <repository>
       <id>papermc-public</id>
       <url>https://repo.papermc.io/repository/maven-public/</url>
-      <releases><enabled>true</enabled></releases>
       <snapshots><enabled>true</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+      <id>spongepowered-repo</id>
+      <url>https://repo.spongepowered.org/repository/maven-public/</url>
+      <snapshots><enabled>true</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
     </repository>
   </repositories>
 
   <dependencies>
-  <!-- Paper API для org.bukkit.* -->
-  <dependency>
-    <groupId>io.papermc.paper</groupId>
-    <artifactId>paper-api</artifactId>
-    <version>1.21.5-R0.1-SNAPSHOT</version>
-    <scope>provided</scope>
-  </dependency>
+    <!-- Paper API (provided) -->
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <version>${paper.api.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-  <!-- Spigot, локально собранный через BuildTools -->
-  <dependency>
-    <groupId>org.spigotmc</groupId>
-    <artifactId>spigot</artifactId>
-    <version>1.21.5-R0.1-SNAPSHOT</version>
-    <scope>provided</scope>
-  </dependency>
-</dependencies>
+    <!-- Spigot (provided) -->
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot</artifactId>
+      <version>1.21.5-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Mixin-bundle (Bootstrap+Core), фиксируем 0.8.10 -->
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>mixin</artifactId>
+      <version>${mixin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
-          <configuration>
-            <source>${maven.compiler.source}</source>
-            <target>${maven.compiler.target}</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <!-- Чтобы mixins.lws.json и plugin.yml попали в итоговый JAR -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>mixins.lws.json</include>
+          <include>plugin.yml</include>
+        </includes>
+      </resource>
+    </resources>
+
+    <plugins>
+      <!-- Java 17 -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+
+      <!-- Shade Plugin: релокация org.spongepowered.asm → com.govnoslav.shaded.mixin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>org.spongepowered.asm</pattern>
+                  <shadedPattern>com.govnoslav.shaded.mixin</shadedPattern>
+                </relocation>
+              </relocations>
+              <transformers>
+                <!-- Вставляем в манифест MixinConfigs: mixins.lws.json -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.govnoslav.SigmaWarsMain</mainClass>
+                  <manifestEntries>
+                    <MixinConfigs>mixins.lws.json</MixinConfigs>
+                  </manifestEntries>
+                </transformer>
+                <!-- Копируем mixins.lws.json в корень итогового JAR -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>mixins.lws.json</resource>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>

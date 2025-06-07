@@ -1,11 +1,13 @@
 name: lws
 main: com.govnoslav.SigmaWarsMain
 load: POSTWORLD
-version: 1.1
+version: 1.2
 api-version: 1.21
 description: Lucky Wars Baffled Eblan Chorn Pild ZV Goida plugin 52 666 sigma
 authors: [GovnoSlav]
 softdepend: []
+depend:
+  - MixinBootstrap
 commands:
   reload:
     usage: /reload
