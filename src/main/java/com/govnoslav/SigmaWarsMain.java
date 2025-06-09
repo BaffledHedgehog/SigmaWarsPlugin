@@ -20,8 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.govnoslav.item.Malevich;
 import com.govnoslav.item.MetalPipe;
-
 
 public class SigmaWarsMain extends JavaPlugin implements Listener {
 
@@ -41,14 +41,12 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        //////////////
-        // 1) Регистрируем ItemSpawn
-        // Регистрируем слушатель и запускаем логику metal_pipe
-        MetalPipe metalPipe = new MetalPipe(this);
-        getServer().getPluginManager().registerEvents(metalPipe, this);
+        // Malevich
+        Malevich malevich = new Malevich(this);
+        getServer().getPluginManager().registerEvents(malevich, this);
+        // register MetalPipe
+        getServer().getPluginManager().registerEvents(new MetalPipe(this), this);
 
-        // MotionCommand motionHandler = new MotionCommand(this);
-        // getCommand("motion").setExecutor(motionHandler);
         // getCommand("motion").setTabCompleter(motionHandler);
         Objects.requireNonNull(getCommand("motion")).setExecutor(new MotionCommand());
         Objects.requireNonNull(getCommand("motion")).setTabCompleter(new MotionCommand());

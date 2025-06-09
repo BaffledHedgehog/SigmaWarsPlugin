@@ -58,28 +58,9 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Mixin-bundle (Bootstrap+Core), фиксируем 0.8.10 -->
-    <dependency>
-      <groupId>org.spongepowered</groupId>
-      <artifactId>mixin</artifactId>
-      <version>${mixin.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
-    <!-- Чтобы mixins.lws.json и plugin.yml попали в итоговый JAR -->
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>mixins.lws.json</include>
-          <include>plugin.yml</include>
-        </includes>
-      </resource>
-    </resources>
-
     <plugins>
       <!-- Java 17 -->
       <plugin>
@@ -91,39 +72,6 @@
         </configuration>
       </plugin>
 
-      <!-- Shade Plugin: релокация org.spongepowered.asm → com.govnoslav.shaded.mixin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals><goal>shade</goal></goals>
-            <configuration>
-              <relocations>
-                <relocation>
-                  <pattern>org.spongepowered.asm</pattern>
-                  <shadedPattern>com.govnoslav.shaded.mixin</shadedPattern>
-                </relocation>
-              </relocations>
-              <transformers>
-                <!-- Вставляем в манифест MixinConfigs: mixins.lws.json -->
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.govnoslav.SigmaWarsMain</mainClass>
-                  <manifestEntries>
-                    <MixinConfigs>mixins.lws.json</MixinConfigs>
-                  </manifestEntries>
-                </transformer>
-                <!-- Копируем mixins.lws.json в корень итогового JAR -->
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>mixins.lws.json</resource>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 </project>

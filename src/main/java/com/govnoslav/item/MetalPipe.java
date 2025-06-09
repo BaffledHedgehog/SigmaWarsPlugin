@@ -1,5 +1,14 @@
-// src/main/java/com/lws/item/MetalPipe.java
+// src/main/java/com/govnoslav/item/MetalPipe.java
 package com.govnoslav.item;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -10,174 +19,166 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class MetalPipe implements Listener {
-    private final JavaPlugin plugin;
-    private final NamespacedKey typeKey;
-    /** UUID предмета → предыдущий onGround */
+    private final NamespacedKey itemKey, typeKey;
     private final Map<UUID, Boolean> trackedItems = new ConcurrentHashMap<>();
+    private final Map<UUID, UUID> throwers     = new ConcurrentHashMap<>();
 
     public MetalPipe(JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.typeKey = new NamespacedKey(plugin, "lws:type");
-        startMonitorTask();
-    }
+        this.itemKey = new NamespacedKey(plugin, "item");
+        this.typeKey = new NamespacedKey(plugin, "type");
 
-    /** Запускаем глобальный таск, который смотрит только за трекаемыми предметами */
-    private void startMonitorTask() {
+        // таск трекинга onGround
         new BukkitRunnable() {
             @Override
             public void run() {
                 Iterator<Map.Entry<UUID, Boolean>> it = trackedItems.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<UUID, Boolean> entry = it.next();
-                    UUID id = entry.getKey();
-                    boolean prevOnGround = entry.getValue();
-
-                    Entity e = plugin.getServer().getEntity(id);
-                    if (!(e instanceof Item) || !e.isValid()) {
+                    Entity ent = plugin.getServer().getEntity(entry.getKey());
+                    if (!(ent instanceof Item) || !ent.isValid()) {
                         it.remove();
+                        throwers.remove(entry.getKey());
                         continue;
                     }
-
-                    Item bukkitItem = (Item) e;
+                    Item bItem = (Item) ent;
                     try {
-                        Object nmsItem = getNmsHandle(bukkitItem);
+                        Object nms = getHandle(bItem);
+                        boolean now  = readOnGround(nms);
+                        boolean prev = entry.getValue();
 
-                        if (isExcludedDimension(nmsItem)) {
-                            // в Nexus/Imprinted не обрабатываем и удаляем из трекинга
+                        if (!prev && now) {
+                            handleLanding(bItem, nms);
                             it.remove();
-                            continue;
+                            throwers.remove(entry.getKey());
+                        } else if (prev && !now) {
+                            bItem.setPickupDelay(Integer.MAX_VALUE);
+                            entry.setValue(false);
+                        } else {
+                            entry.setValue(now);
                         }
-
-                        boolean nowOnGround = invokeIsOnGround(nmsItem);
-
-                        // Первая смена Air→Ground
-                        if (!prevOnGround && nowOnGround) {
-                            handleLanding(bukkitItem, nmsItem);
-                        }
-                        // Ground→Air
-                        else if (prevOnGround && !nowOnGround) {
-                            bukkitItem.setPickupDelay(Integer.MAX_VALUE);
-                        }
-
-                        // Обновим состояние
-                        entry.setValue(nowOnGround);
-
                     } catch (ReflectiveOperationException ex) {
-                        plugin.getLogger().severe("MetalPipe reflection error: " + ex);
+                        //plugin.getLogger().severe("MetalPipe reflection error: " + ex);
                         it.remove();
+                        throwers.remove(entry.getKey());
                     }
                 }
             }
         }.runTaskTimer(plugin, 1, 1);
     }
 
-    /** При спавне сразу ставим infinite-delay и стартуем трекинг */
+    @EventHandler
+    public void onPlayerDrop(PlayerDropItemEvent e) {
+        Item drop = e.getItemDrop();
+        PersistentDataContainer root = drop.getItemStack()
+            .getItemMeta()
+            .getPersistentDataContainer();
+
+        if (!root.has(itemKey, PersistentDataType.TAG_CONTAINER)) return;
+        PersistentDataContainer lws = root.get(itemKey, PersistentDataType.TAG_CONTAINER);
+        if (lws != null && "metal_pipe".equals(lws.get(typeKey, PersistentDataType.STRING))) {
+            drop.setPickupDelay(Integer.MAX_VALUE);
+            UUID id = drop.getUniqueId();
+            trackedItems.put(id, false);
+            throwers.put(id, e.getPlayer().getUniqueId());
+        }
+    }
+
     @EventHandler
     public void onSpawn(EntitySpawnEvent e) {
         if (!(e.getEntity() instanceof Item)) return;
         Item item = (Item) e.getEntity();
+        PersistentDataContainer root = item.getItemStack()
+            .getItemMeta()
+            .getPersistentDataContainer();
 
-        PersistentDataContainer pdc = item.getItemStack()
-            .getItemMeta().getPersistentDataContainer();
-        String type = pdc.get(typeKey, PersistentDataType.STRING);
-        if (!"metal_pipe".equals(type)) return;
-
-        try {
-            Object nmsItem = getNmsHandle(item);
-            if (isExcludedDimension(nmsItem)) return;
-
-            // делаем неподбираемым
+        if (!root.has(itemKey, PersistentDataType.TAG_CONTAINER)) return;
+        PersistentDataContainer lws = root.get(itemKey, PersistentDataType.TAG_CONTAINER);
+        if (lws != null && "metal_pipe".equals(lws.get(typeKey, PersistentDataType.STRING))) {
             item.setPickupDelay(Integer.MAX_VALUE);
-            // добавляем в трекинг, initial onGround = false (в воздухе)
             trackedItems.put(item.getUniqueId(), false);
-
-        } catch (ReflectiveOperationException ex) {
-            plugin.getLogger().severe("MetalPipe onSpawn reflection error: " + ex);
+            throwers.remove(item.getUniqueId());
         }
     }
 
-    /** Логика при приземлении */
-    private void handleLanding(Item bukkitItem, Object nmsItem) throws ReflectiveOperationException {
-        // снова можно подбирать
+    private void handleLanding(Item bukkitItem, Object nms) throws ReflectiveOperationException {
         bukkitItem.setPickupDelay(0);
-
-        // звук всем в 27 блоках
         bukkitItem.getWorld().playSound(
             bukkitItem.getLocation(),
-            "lbcsounds.metal_pipe",  // кастомный звук из ресурс-пака
-            4.0f, 1.0f
+            "lbcsounds.metal_pipe", 4.0f, 1.0f
         );
 
-        // дамажим всех в 2.5 блока
+        UUID shooterId = throwers.get(bukkitItem.getUniqueId());
+        if (shooterId == null) {
+            shooterId = readThrowerFromNbt(nms);
+        }
+
         for (Entity near : bukkitItem.getNearbyEntities(2.5, 2.5, 2.5)) {
             if (!(near instanceof LivingEntity)) continue;
             LivingEntity victim = (LivingEntity) near;
-
-            Method getThrower = nmsItem.getClass().getMethod("getThrower");
-            Object throwerId = getThrower.invoke(nmsItem);
-
-            if (throwerId != null) {
-                UUID uuid = (UUID) throwerId;
-                Player shooter = Bukkit.getPlayer(uuid);
-                if (shooter != null) {
-                    victim.damage(25.0, shooter);
-                } else {
-                    victim.damage(25.0, bukkitItem);
-                }
+            if (shooterId != null) {
+                Player shooter = Bukkit.getPlayer(shooterId);
+                victim.damage(25.0, shooter != null ? shooter : bukkitItem);
             } else {
                 victim.damage(25.0, bukkitItem);
             }
         }
     }
 
-    /** Reflection-утилиты **/
-    private Object getNmsHandle(Item bukkitItem) throws ReflectiveOperationException {
-        Method getHandle = bukkitItem.getClass().getMethod("getHandle");
-        return getHandle.invoke(bukkitItem);
+    // --- NMS / reflection helpers ---
+
+    private Object getHandle(Item bukkitItem) throws ReflectiveOperationException {
+        Method m = bukkitItem.getClass().getMethod("getHandle");
+        return m.invoke(bukkitItem);
     }
 
-    private boolean invokeIsOnGround(Object nmsItem) throws ReflectiveOperationException {
-        Method m = nmsItem.getClass().getMethod("isOnGround");
-        return (Boolean) m.invoke(nmsItem);
-    }
-
-    /** Проверяет, что предмет находится в мире Nexus или Imprinted */
-    private boolean isExcludedDimension(Object nmsItem) {
-        try {
-            // Получаем поле level
-            Field levelField = nmsItem.getClass().getDeclaredField("level");
-            levelField.setAccessible(true);
-            Object level = levelField.get(nmsItem);
-
-            // Вызываем метод dimension() → ResourceKey<Level>
-            Method dimensionKeyMethod = level.getClass().getMethod("dimension");
-            Object resourceKey = dimensionKeyMethod.invoke(level);
-
-            // ResourceKey.location() → ResourceLocation
-            Method locationMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLocation = locationMethod.invoke(resourceKey);
-
-            // Получаем строку namespace:path
-            Method toString = resourceLocation.getClass().getMethod("toString");
-            String dim = (String) toString.invoke(resourceLocation);
-
-            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
-        } catch (Exception ex) {
-            // если не удалось определить — считаем, что обрабатывать можно
-            return false;
+    private boolean readOnGround(Object nms) throws ReflectiveOperationException {
+        Class<?> cls = nms.getClass();
+        while (cls != null) {
+            try {
+                Field f = cls.getDeclaredField("onGround");
+                f.setAccessible(true);
+                return f.getBoolean(nms);
+            } catch (NoSuchFieldException ex) {
+                cls = cls.getSuperclass();
+            }
         }
+        throw new NoSuchFieldException("Поле onGround не найдено");
+    }
+
+    /**
+     * Исправленный фолбэк: теперь getIntArray(...) возвращает Optional<int[]>,
+     * мы безопасно вызываем Optional.orElse(null) и только потом конвертим.
+     */
+    private UUID readThrowerFromNbt(Object nms) throws ReflectiveOperationException {
+        // 1) сериализуем entity в CompoundTag
+        Class<?> tagClass = Class.forName("net.minecraft.nbt.CompoundTag");
+        Constructor<?> ctor = tagClass.getConstructor();
+        Object emptyTag = ctor.newInstance();
+
+        Method save = nms.getClass().getMethod("saveWithoutId", tagClass);
+        Object tag  = save.invoke(nms, emptyTag);
+
+        // 2) вызываем getIntArray -> Optional<int[]>
+        Method getIntArray = tagClass.getMethod("getIntArray", String.class);
+        Object maybeArr = getIntArray.invoke(tag, "Thrower");
+
+        int[] arr = null;
+        if (maybeArr instanceof Optional<?>) {
+            @SuppressWarnings("unchecked")
+            Optional<int[]> opt = (Optional<int[]>) maybeArr;
+            arr = opt.orElse(null);
+        }
+        if (arr == null || arr.length != 4) return null;
+
+        long msb = ((long) arr[0] << 32) | (arr[1] & 0xFFFFFFFFL);
+        long lsb = ((long) arr[2] << 32) | (arr[3] & 0xFFFFFFFFL);
+        return new UUID(msb, lsb);
     }
 }
