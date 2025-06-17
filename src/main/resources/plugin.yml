@@ -1,7 +1,7 @@
 name: lws
 main: com.govnoslav.SigmaWarsMain
 load: POSTWORLD
-version: 1.3
+version: 1.4
 api-version: 1.21
 description: Lucky Wars Baffled Eblan Chorn Pild ZV Goida plugin 52 666 sigma
 authors: [GovnoSlav]
@@ -22,6 +22,9 @@ commands:
     description: Управление вектором Motion у сущностей
     usage: /motion <set|add> <x> <y> <z> <цели>  или  /motion multiple <scalar> <цели>
     permission: sigmawars.motion
+  clonetonexus:
+    description: Clone region 11x11x11 to Nexus at random coords
+    usage: /clonetonexus
 permissions:
   itemfix.reload:
     default: op

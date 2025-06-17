@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.govnoslav.item.Malevich;
 import com.govnoslav.item.MetalPipe;
+import com.govnoslav.item.RocketArmor;
 
 public class SigmaWarsMain extends JavaPlugin implements Listener {
 
@@ -41,6 +42,14 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        this.getCommand("clonetonexus").setExecutor(new NexusCloneCommand());
+
+        getServer().getPluginManager().registerEvents(
+            new RocketArmor(this),
+            this
+        );
+        
         // Malevich
         Malevich malevich = new Malevich(this);
         getServer().getPluginManager().registerEvents(malevich, this);
