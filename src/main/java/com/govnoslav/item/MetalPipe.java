@@ -108,7 +108,7 @@ public class MetalPipe implements Listener {
     }
 
     private void handleLanding(Item bukkitItem, Object nms) throws ReflectiveOperationException {
-        bukkitItem.setPickupDelay(0);
+        bukkitItem.setPickupDelay(20);
         bukkitItem.getWorld().playSound(
             bukkitItem.getLocation(),
             "lbcsounds.metal_pipe", 4.0f, 1.0f

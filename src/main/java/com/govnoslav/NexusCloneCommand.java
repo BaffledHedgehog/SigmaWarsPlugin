@@ -1,213 +1,225 @@
-// src/main/java/com/govnoslav/NexusCloneCommand.java
 package com.govnoslav;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import com.fastasyncworldedit.core.extent.clipboard.WorldCopyClipboard;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.session.ClipboardHolder;
+
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.entity.TeleportFlag.EntityState;
 
-public class NexusCloneCommand implements CommandExecutor {
-    private static final int RADIUS = 5;  // copy 11×11×11
+/**
+ * Clones the entire chunk around the command origin (including /execute at) to Nexus.
+ */
+public class NexusCloneCommand implements BasicCommand {
+    private final JavaPlugin plugin;
+    private static final int SIZE = 16;
+    private static final int HALF = SIZE / 2;
+    private final Random random = new Random();
+    private final Set<String> pendingChunks = ConcurrentHashMap.newKeySet();
+    private final Set<Future<?>> tasks = ConcurrentHashMap.newKeySet();
+    private final ThreadPoolExecutor executor;
+    private final ExecutorCompletionService<Void> completionService;
+    private final Object jsonLock = new Object();
+    private final Gson gson = new Gson();
+
+    public NexusCloneCommand(JavaPlugin plugin) {
+        this.plugin = plugin;
+        int threads = Math.max(1, Runtime.getRuntime().availableProcessors());
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
+        this.completionService = new ExecutorCompletionService<>(executor);
+
+        // Cleanup completed tasks periodically
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                tasks.removeIf(Future::isDone);
+            }
+        }.runTaskTimer(plugin, 20 * 60, 20 * 60);
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        // 1) Determine origin
-        Location origin;
-        World srcWorld;
-        if (sender instanceof Player p) {
-            origin = p.getLocation();
-            srcWorld = p.getWorld();
-        } else if (sender instanceof BlockCommandSender bcs) {
-            origin = bcs.getBlock().getLocation();
-            srcWorld = origin.getWorld();
-        } else {
-            if (Bukkit.getWorlds().isEmpty()) {
-                //sender.sendMessage("[CloneToNexus] No worlds loaded.");
-                return true;
-            }
-            srcWorld = Bukkit.getWorlds().get(0);
-            origin = srcWorld.getSpawnLocation();
-            //sender.sendMessage("[CloneToNexus] Using spawn of " + srcWorld.getName() + " as origin.");
-        }
-        if (srcWorld == null) {
-            //sender.sendMessage("[CloneToNexus] Source world undefined.");
-            return true;
+    public void execute(CommandSourceStack src, String[] args) {
+        // stop command
+        if (args.length > 0 && "stop".equalsIgnoreCase(args[0])) {
+            for (Future<?> f : tasks) f.cancel(true);
+            tasks.clear();
+            pendingChunks.clear();
+            return;
         }
 
-        // world height bounds
-        int srcMinY = srcWorld.getMinHeight();
-        int srcMaxY = srcWorld.getMaxHeight();
+        final Location origin = src.getLocation();
+        final World srcWorld = origin.getWorld();
+        if (srcWorld == null) return;
 
-        // 2) Buffer blocks and containers
-        int size = RADIUS * 2 + 1;
-        Material[][][] buffer = new Material[size][size][size];
-        Map<String, ItemStack[]> containerMap = new HashMap<>();
-        int sx = origin.getBlockX() - RADIUS;
-        int sy = origin.getBlockY() - RADIUS;
-        int sz = origin.getBlockZ() - RADIUS;
-        for (int dx = 0; dx < size; dx++) {
-            for (int dy = 0; dy < size; dy++) {
-                int by = sy + dy;
-                boolean inSrcY = (by >= srcMinY && by < srcMaxY);
-                for (int dz = 0; dz < size; dz++) {
-                    if (!inSrcY) {
-                        buffer[dx][dy][dz] = Material.AIR;
-                    } else {
-                        Block b = srcWorld.getBlockAt(sx + dx, by, sz + dz);
-                        buffer[dx][dy][dz] = b.getType();
-                        BlockState st = b.getState();
-                        if (st instanceof Container c) {
-                            containerMap.put(dx + "," + dy + "," + dz,
-                                    c.getSnapshotInventory().getContents().clone());
-                        }
-                    }
-                }
-            }
-        }
+        final int cx = origin.getBlockX() >> 4;
+        final int cz = origin.getBlockZ() >> 4;
+        final String key = cx + "," + cz;
+        if (!pendingChunks.add(key)) return;
 
-        // 3) Find nexus world
-        World nexus = null;
-        for (World w : Bukkit.getWorlds()) {
-            if (w.getName().toLowerCase().contains("nexus")) { nexus = w; break; }
-        }
+        final World nexus = Bukkit.getWorlds().stream()
+            .filter(w -> w.getName().toLowerCase().contains("nexus"))
+            .findFirst().orElse(null);
         if (nexus == null) {
-            sender.sendMessage("[CloneToNexus] Nexus world not found (folder must contain 'nexus').");
-            return true;
+            pendingChunks.remove(key);
+            return;
         }
 
-        // 4) Choose random coords
-        Random rand = new Random(UUID.randomUUID().getLeastSignificantBits());
-        int tx = rand.nextInt(10001) - 5000;
-        int ty = rand.nextInt(1981) + 20;
-        int tz = rand.nextInt(10001) - 5000;
-        sender.sendMessage("[CloneToNexus] Pasting to Nexus at (" + tx + "," + ty + "," + tz + ")");
+        final int bound = 5000 / SIZE;
+        final int dx = random.nextInt(bound * 2 + 1) - bound;
+        final int dz2 = random.nextInt(bound * 2 + 1) - bound;
+        final int tx = (dx << 4) + HALF;
+        final int tz = (dz2 << 4) + HALF;
+        final int ty = random.nextInt(srcWorld.getMaxHeight() - srcWorld.getMinHeight()) + srcWorld.getMinHeight();
 
-        // 5) Paste blocks into nexus world
-        for (int dx = 0; dx < size; dx++) {
-            for (int dy = 0; dy < size; dy++) {
-                int by = ty + dy - RADIUS;
-                for (int dz = 0; dz < size; dz++) {
-                    Material mat = buffer[dx][dy][dz];
-                    if (mat.isAir()) continue;
-                    Block nb = nexus.getBlockAt(tx + dx - RADIUS, by, tz + dz - RADIUS);
-                    nb.setType(mat, false);
-                    String key = dx + "," + dy + "," + dz;
-                    if (containerMap.containsKey(key)) {
-                        BlockState nst = nb.getState();
-                        if (nst instanceof Container nc) {
-                            nc.getSnapshotInventory().setContents(containerMap.get(key));
-                            nst.update(true, false);
+        Future<?> future = completionService.submit(() -> {
+            try {
+                // Phase 1: copy
+                var weSrc = BukkitAdapter.adapt(srcWorld);
+                var weDst = BukkitAdapter.adapt(nexus);
+                BlockVector3 min = BlockVector3.at(cx << 4, srcWorld.getMinHeight(), cz << 4);
+                BlockVector3 max = BlockVector3.at((cx << 4) + SIZE - 1, srcWorld.getMaxHeight() - 1, (cz << 4) + SIZE - 1);
+                var region = new CuboidRegion(weSrc, min, max);
+                var clipboard = WorldCopyClipboard.of(() -> weSrc, region);
+                clipboard.setOrigin(min);
+                ClipboardHolder holder = new ClipboardHolder(clipboard);
+                try (EditSession session = WorldEdit.getInstance()
+                        .newEditSessionBuilder().world(weDst).maxBlocks(Integer.MAX_VALUE).build()) {
+                    Operations.complete(holder.createPaste(session)
+                        .to(BlockVector3.at(tx - HALF, ty - HALF, tz - HALF))
+                        .ignoreAirBlocks(false).build());
+                }
+
+                // Phase 2: clear source
+                try (EditSession clear = WorldEdit.getInstance()
+                        .newEditSessionBuilder().world(weSrc).maxBlocks(Integer.MAX_VALUE).build()) {
+                    clear.setBlocks(region, com.sk89q.worldedit.world.block.BlockTypes.AIR.getDefaultState());
+                }
+
+                // Phase 3: finalize on main thread
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Chunk srcC = srcWorld.getChunkAt(cx, cz);
+                            for (var e : srcC.getEntities()) {
+                                if (e instanceof Player || e.getType() == EntityType.MARKER) continue;
+                                Location loc = e.getLocation();
+                                e.teleport(new Location(nexus,
+                                    tx + (loc.getX() - origin.getX()),
+                                    ty + (loc.getY() - origin.getY()),
+                                    tz + (loc.getZ() - origin.getZ()),
+                                    loc.getYaw(), loc.getPitch()),
+                                    EntityState.RETAIN_PASSENGERS, EntityState.RETAIN_VEHICLE);
+                            }
+                            // load destination chunk
+                            Chunk dstC = nexus.getChunkAt(tx >> 4, tz >> 4);
+                            dstC.load();
+
+                            // place 3 center markers
+                            for (int i = 0; i < 3; i++) {
+                                int ax = tx - HALF + random.nextInt(SIZE);
+                                int az = tz - HALF + random.nextInt(SIZE);
+                                int ay = nexus.getHighestBlockYAt(ax, az);
+                                if (!nexus.getBlockAt(ax, ay - 1, az).getType().isSolid()) {
+                                    nexus.getBlockAt(ax, ay - 1, az).setType(Material.PURPLE_CONCRETE, false);
+                                }
+                                Location markerLoc = new Location(nexus, ax + 0.5, ay + 0.5, az + 0.5);
+                                Entity centerMarker = nexus.spawnEntity(markerLoc, EntityType.MARKER);
+                                centerMarker.addScoreboardTag("center_cube");
+                                centerMarker.addScoreboardTag("nexus_rc");
+                            }
+
+                            // place 16 vertical tree markers
+                            int minY = nexus.getMinHeight();
+                            int maxY = nexus.getMaxHeight() - 1;
+                            double mx = tx + 0.5;
+                            double mz = tz + 0.5;
+                            for (int i = 0; i < 16; i++) {
+                                double yy = minY + (maxY - minY) * i / 15.0 + 0.5;
+                                Location treeLoc = new Location(nexus, mx, yy, mz);
+                                Entity treeMarker = nexus.spawnEntity(treeLoc, EntityType.MARKER);
+                                treeMarker.addScoreboardTag("nexus_tree");
+                                treeMarker.addScoreboardTag("nexus_rc");
+                            }
+                            dstC.unload(true);
+                            srcC.unload(true);
+                        } finally {
+                            pendingChunks.remove(key);
                         }
                     }
+                }.runTask(plugin);
+
+                // Phase 4: save coords safely
+                String entry = String.format("{\"x\":%d,\"y\":%d,\"z\":%d}", tx + 5, ty + 321, tz + 5);
+                synchronized (jsonLock) {
+                    File file = new File(plugin.getDataFolder(), "nexus_coords.json");
+                    if (!file.exists()) {
+                        plugin.getDataFolder().mkdirs();
+                        try (var w = new java.io.FileWriter(file)) { w.write("[]"); }
+                    }
+                    Type listType = new TypeToken<List<Map<String, Number>>>() {}.getType();
+                    List<Map<String, Number>> list;
+                    try {
+                        String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+                        list = gson.fromJson(content, listType);
+                        if (list == null) list = new ArrayList<>();
+                    } catch (IOException ex) {
+                        list = new ArrayList<>();
+                    }
+                    Map<String, Number> map = gson.fromJson(entry, Map.class);
+                    list.add(map);
+                    try (var w = new java.io.FileWriter(file)) {
+                        w.write(gson.toJson(list));
+                    }
                 }
+
+            } catch (Throwable ex) {
+                pendingChunks.remove(key);
             }
-        }
+            return null;
+        });
+        tasks.add(future);
+    }
 
-        // 6) Move entities via teleport
-        double rad = RADIUS + 0.5;
-        Collection<Entity> ents = srcWorld.getNearbyEntities(origin, rad, rad, rad);
-        for (Entity e : ents) {
-            if (e.getType() == EntityType.MARKER) continue;
-            if (e instanceof Player) continue;
-            Location loc = e.getLocation();
-            double offsetX = loc.getX() - origin.getX();
-            double offsetY = loc.getY() - origin.getY();
-            double offsetZ = loc.getZ() - origin.getZ();
-            double destY = ty + offsetY;
-            Location dest = new Location(nexus,
-                tx + offsetX, destY, tz + offsetZ,
-                loc.getYaw(), loc.getPitch());
-            nexus.getChunkAt((int)Math.floor(tx + offsetX) >> 4,
-                             (int)Math.floor(tz + offsetZ) >> 4).load();
-            e.teleport(dest, EntityState.RETAIN_PASSENGERS, EntityState.RETAIN_VEHICLE);
-        }
-
-        // 7) Clear source region blocks only
-        for (int dx = 0; dx < size; dx++) {
-            for (int dy = 0; dy < size; dy++) {
-                int by = sy + dy;
-                if (by < srcMinY || by >= srcMaxY) continue;
-                for (int dz = 0; dz < size; dz++) {
-                    Block b = srcWorld.getBlockAt(sx + dx, by, sz + dz);
-                    b.setType(Material.AIR, false);
-                }
-            }
-        }
-
-
-        // 8) Place markers and unload chunk
-        int cx = tx;
-        int cz = tz;
-        int blockY = ty - 1;
-        Chunk chunk = nexus.getChunkAt(cx >> 4, cz >> 4);
-        chunk.load();
-        Block ground = nexus.getBlockAt(cx, blockY, cz);
-        if (!ground.getType().isSolid()) ground.setType(Material.STONE, false);
-        Location markerLoc = new Location(nexus, cx + 0.5, blockY + 0.5, cz + 0.5);
-        Entity center = nexus.spawnEntity(markerLoc, EntityType.MARKER);
-        center.addScoreboardTag("center_cube");
-        center.addScoreboardTag("nexus_rc");
-        for (int i = 0; i < 8; i++) {
-            Entity tree = nexus.spawnEntity(markerLoc, EntityType.MARKER);
-            tree.addScoreboardTag("nexus_tree");
-            tree.addScoreboardTag("nexus_rc");
-        }
-
-        // 9) Save island coords
-        try {
-            JavaPlugin plugin = JavaPlugin.getPlugin(SigmaWarsMain.class);
-            File file = new File(plugin.getDataFolder(), "nexus_coords.json");
-            if (!file.exists()) {
-                plugin.getDataFolder().mkdirs();
-                try (FileWriter w = new FileWriter(file)) { w.write("[]"); }
-            }
-            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8).trim();
-            int ox = tx + 5, oy = ty + 20, oz = tz + 5;
-            String entry = String.format("{\"x\":%d,\"y\":%d,\"z\":%d}", ox, oy, oz);
-            String newContent = content.equals("[]") ? "[" + entry + "]"
-                : content.substring(0, content.length()-1) + "," + entry + "]";
-            Files.writeString(file.toPath(), newContent, StandardCharsets.UTF_8);
-        } catch (Exception ex) {
-            //sender.sendMessage("[CloneToNexus] Failed to save coords: " + ex.getMessage());
-        }
-
-        chunk.unload(true);
-        // Release references and suggest GC
-        buffer = null;
-        containerMap.clear();
-        ents = null;
-        center = null;
-        markerLoc = null;
-        chunk = null;
-        ground = null;
-        System.gc();
-        
-
-        return true;
+    /**
+     * Call this on plugin disable to clean up executor threads.
+     */
+    public void disable() {
+        executor.shutdownNow();
     }
 }

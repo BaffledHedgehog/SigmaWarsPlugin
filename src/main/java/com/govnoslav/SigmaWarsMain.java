@@ -25,6 +25,7 @@ import com.govnoslav.item.MetalPipe;
 import com.govnoslav.item.NexusCompass;
 import com.govnoslav.item.RocketArmor;
 
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
 public class SigmaWarsMain extends JavaPlugin implements Listener {
 
@@ -47,14 +48,16 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(new NexusCompass(this), this);
 
-
-        this.getCommand("clonetonexus").setExecutor(new NexusCloneCommand());
+        this.getLifecycleManager().registerEventHandler(
+                LifecycleEvents.COMMANDS,
+                commands -> commands.registrar().register(
+                        "clonetonexus",
+                        new NexusCloneCommand(this)));
 
         getServer().getPluginManager().registerEvents(
-            new RocketArmor(this),
-            this
-        );
-        
+                new RocketArmor(this),
+                this);
+
         // Malevich
         Malevich malevich = new Malevich(this);
         getServer().getPluginManager().registerEvents(malevich, this);
