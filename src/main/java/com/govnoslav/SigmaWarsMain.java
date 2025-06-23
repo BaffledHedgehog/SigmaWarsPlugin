@@ -54,6 +54,12 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
                         "clonetonexus",
                         new NexusCloneCommand(this)));
 
+        this.getLifecycleManager().registerEventHandler(
+                LifecycleEvents.COMMANDS,
+                commands -> commands.registrar().register(
+                        "antigravity",
+                        new AntigravityCommand(this)));
+
         getServer().getPluginManager().registerEvents(
                 new RocketArmor(this),
                 this);

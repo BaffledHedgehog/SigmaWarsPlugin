@@ -25,6 +25,9 @@ commands:
   clonetonexus:
     description: Clone region 11x11x11 to Nexus at random coords
     usage: /clonetonexus
+  antigravity:
+    description: antigravities blocks around
+    usage: /antigravity
 permissions:
   itemfix.reload:
     default: op
