@@ -81,11 +81,11 @@ public class AntigravityCommand implements CommandExecutor, BasicCommand {
 
                             ticks++;
                             boolean nearPlayer = display.getLocation()
-                                    .getNearbyEntities(100, 50, 100)
+                                    .getNearbyEntities(150, 300, 150)
                                     .stream().anyMatch(e -> e instanceof Player);
                             if (nearPlayer)
                                 ticks = 0;
-                            if (ticks >= 5 * 20) {
+                            if (ticks >= 1 * 20) {
                                 display.remove();
                                 cancel();
                             }
