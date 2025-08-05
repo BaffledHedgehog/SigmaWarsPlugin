@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+group = 'me.luckywars'
+version = '1.0.5'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    maven {
+        name = 'papermc'
+        url  = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    mavenCentral()
+    maven {
+        name = 'EngineHub'
+        url  = 'https://maven.enginehub.org/repo/'
+    }
+}
+
+dependencies {
+    // Paper API
+    compileOnly 'io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT'
+
+    // WorldEdit Bukkit API — use 7.3.14, the latest published 7.3.x build :contentReference[oaicite:0]{index=0}
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.3.14'
+
+    // FastAsyncWorldEdit Bukkit API
+    compileOnly 'com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.13.1'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
