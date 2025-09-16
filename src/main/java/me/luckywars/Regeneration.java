@@ -1,5 +1,6 @@
 package me.luckywars;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
@@ -22,6 +24,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -114,6 +118,10 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
             public void run() {
                 // --- Игроки ---
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (isExcludedDimension(player.getWorld()) == true) {
+                        return;
+                    }
+
                     UUID uuid = player.getUniqueId();
 
                     Double regen = playerRegenCache.get(uuid);
@@ -123,6 +131,10 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
                     AttributeInstance inst = player.getAttribute(Attribute.MAX_HEALTH);
                     if (inst == null)
                         continue;
+
+                    if (hasMagicStopperMarkerNearby(player, 20)) {
+                        continue;
+                    }
 
                     double maxHealth = inst.getValue();
                     double newHealth = Math.min(player.getHealth() + regen, maxHealth);
@@ -157,6 +169,16 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
      * Пересчитывает скорость регена игрока, комбинируя эффекты /regen и
      * модификаторы от предметов в инвентаре/наборе брони.
      */
+    private boolean hasMagicStopperMarkerNearby(Player p, double radius) {
+        World w = p.getWorld();
+        for (Entity ent : w.getNearbyEntities(p.getLocation(), radius, radius, radius)) {
+            if (ent.getType() == EntityType.MARKER && ent.getScoreboardTags().contains("stopper_magic")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void recalcPlayerRegen(Player player) {
         // plugin.getLogger().info("[Recalc] recalcPlayerRegen() called for player=" +
         // player.getName());
@@ -464,6 +486,7 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
         if (!command.getName().equalsIgnoreCase("regen"))
             return false;
         if (args.length < 3) {
@@ -615,6 +638,22 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
     public void disable() {
         if (regenTickTask != null) {
             regenTickTask.cancel();
+        }
+    }
+
+    public boolean isExcludedDimension(World world) {
+        try {
+            Method getHandle = world.getClass().getMethod("getHandle");
+            Object nmsWorld = getHandle.invoke(world);
+            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
+            Object resourceKey = dimMethod.invoke(nmsWorld);
+            Method locMethod = resourceKey.getClass().getMethod("location");
+            Object resourceLoc = locMethod.invoke(resourceKey);
+            Method toString = resourceLoc.getClass().getMethod("toString");
+            String dim = (String) toString.invoke(resourceLoc);
+            return "minecraft:imprinted".equals(dim);
+        } catch (Exception e) {
+            return false;
         }
     }
 }

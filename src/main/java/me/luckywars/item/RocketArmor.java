@@ -1,5 +1,6 @@
 package me.luckywars.item;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -22,9 +24,23 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+//import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Objective;
+//import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
+
+// + добавь импорты
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+
+//import io.papermc.paper.event.entity.EntityEquipmentChangedEvent.EquipmentChange;
+//import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.Nullable;
+//import net.kyori.adventure.text.TextComponent;
+//import me.luckywars.item.Malevich;
 
 public class RocketArmor implements Listener {
     private final NamespacedKey itemKey;
@@ -33,7 +49,7 @@ public class RocketArmor implements Listener {
     private static final String JUMPS_OBJ_NAME = "rocket_armor_jumps";
     private static final String CD_OBJ_NAME = "rocket_armor_jump_cd";
     private static final int MAX_JUMPS = 3;
-    private static final int COOLDOWN_TICKS = 20 * 5;
+    private static final int COOLDOWN_TICKS = 20 * 15;
 
     private final Map<UUID, Integer> jumps = new HashMap<>();
     private final Map<UUID, Integer> cooldown = new HashMap<>();
@@ -95,6 +111,28 @@ public class RocketArmor implements Listener {
     }
 
     @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e) {
+        Player p = e.getPlayer();
+        if ((p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+                && wearsRocketArmor(p)) {
+            UUID id = p.getUniqueId();
+            jumps.put(id, MAX_JUMPS);
+            cooldown.put(id, 0);
+        }
+    }
+
+    @EventHandler
+    public void onEquip(PlayerArmorChangeEvent e) {
+        Player p = e.getPlayer();
+        if ((p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
+                && !wearsRocketArmor(p)) {
+            UUID id = p.getUniqueId();
+            jumps.put(id, 0);
+            cooldown.put(id, COOLDOWN_TICKS);
+        }
+    }
+
+    @EventHandler
     public void onToggleGlide(EntityToggleGlideEvent e) {
         if (!(e.getEntity() instanceof Player)) {
             return;
@@ -103,21 +141,26 @@ public class RocketArmor implements Listener {
         if (!e.isGliding()) {
             return;
         }
-
+        boolean isElytra = hasElytra(p); // Cancel glide start if not using elytra to trigger rocket boost
+        if (!isElytra) {
+            e.setCancelled(true);
+            p.setGliding(false);
+        }
+        World world = p.getWorld();
+        if (isExcludedDimension(world)) {
+            return;
+        }
+        if (hasStopperMarkerNearby(p, 20.0)) {
+            return;
+        }
         boolean isRocket = wearsRocketArmor(p);
-        boolean isElytra = hasElytra(p);
+
         boolean isGlider = wearsGlider(p);
         if (isGlider && !isRocket && !isElytra) {
             return;
         }
         if (!isRocket) {
             return;
-        }
-
-        // Cancel glide start if not using elytra to trigger rocket boost
-        if (!isElytra) {
-            e.setCancelled(true);
-            p.setGliding(false);
         }
 
         // Apply rocket boost
@@ -136,7 +179,7 @@ public class RocketArmor implements Listener {
         if (vel.getY() > 0) {
             vel.setY(vel.getY() + 0.5);
         } else if (dir.getY() < 0) {
-            vel.setY(0.25);
+            vel.setY(0.5);
         }
         vel.add(dir);
         p.setVelocity(vel);
@@ -147,9 +190,36 @@ public class RocketArmor implements Listener {
         w.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 2f);
     }
 
+    private boolean hasStopperMarkerNearby(Player p, double radius) {
+        World w = p.getWorld();
+        for (Entity ent : w.getNearbyEntities(p.getLocation(), radius, radius, radius)) {
+            if (ent.getType() == EntityType.MARKER && ent.getScoreboardTags().contains("stopper")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isExcludedDimension(World world) {
+        try {
+            Method getHandle = world.getClass().getMethod("getHandle");
+            Object nmsWorld = getHandle.invoke(world);
+            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
+            Object resourceKey = dimMethod.invoke(nmsWorld);
+            Method locMethod = resourceKey.getClass().getMethod("location");
+            Object resourceLoc = locMethod.invoke(resourceKey);
+            Method toString = resourceLoc.getClass().getMethod("toString");
+            String dim = (String) toString.invoke(resourceLoc);
+            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**
      * Get existing objective or register a new one on given scoreboard.
      */
+    @SuppressWarnings("deprecation")
     private Objective getOrCreateObjective(Scoreboard sb, String name, String criteria) {
         Objective obj = sb.getObjective(name);
         if (obj == null) {
@@ -189,4 +259,5 @@ public class RocketArmor implements Listener {
         ItemStack chest = p.getInventory().getChestplate();
         return chest != null && chest.getType() == Material.ELYTRA;
     }
+
 }

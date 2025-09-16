@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'me.luckywars'
-version = '1.0.5'
+version = '1.0.6'
 
 java {
     toolchain {
@@ -29,10 +29,10 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT'
 
     // WorldEdit Bukkit API — use 7.3.14, the latest published 7.3.x build :contentReference[oaicite:0]{index=0}
-    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.3.14'
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.3.16'
 
     // FastAsyncWorldEdit Bukkit API
-    compileOnly 'com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.13.1'
+    compileOnly 'com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.13.2'
 }
 
 tasks.withType(JavaCompile).configureEach {

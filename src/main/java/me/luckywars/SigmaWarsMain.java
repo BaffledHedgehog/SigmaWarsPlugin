@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -45,8 +47,14 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        getServer().getPluginManager().registerEvents(new ChatOnlyPermissionGate(), this);
 
         getServer().getPluginManager().registerEvents(new NexusCompass(this), this);
+
+        final me.luckywars.badapple.BadAppleService badApple = new me.luckywars.badapple.BadAppleService(this);
+        this.getLifecycleManager().registerEventHandler(
+                io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS,
+                commands -> commands.registrar().register("badapple", badApple.command()));
 
         this.getLifecycleManager().registerEventHandler(
                 LifecycleEvents.COMMANDS,
@@ -139,10 +147,9 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
         queue.addLast(new TrackingItem(item, currentTick));
 
         if (queue.size() > MAX_ITEMS) {
-
-            TrackingItem old = queue.pollFirst();
-            if (old != null && old.item.isValid()) {
-                old.item.remove();
+            int items = world.getEntityCount();
+            if (items > 2000) {
+                queue.pollFirst().item.remove();
             }
         }
     }
@@ -178,4 +185,23 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
         }
     }
 
+    public class ChatOnlyPermissionGate implements Listener {
+        @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+        public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
+            // Сообщение вида "/regen add 1 @s 200"
+            String raw = e.getMessage();
+            String cmd = raw.startsWith("/") ? raw.substring(1) : raw; // "regen add 1..."
+            String label = cmd.split("\\s+", 2)[0].toLowerCase(Locale.ROOT); // "regen" или "bukkit:regen" и т.п.
+
+            if (label.equals("regen") || label.equals("bukkit:regen") || label.equals("lws:regen")
+                    || label.equals("antigravity") || label.equals("lws:antigravity") || label.equals("clonetonexus")
+                    || label.equals("lws:clonetonexus") || label.equals("lws:badapple") || label.equals("badapple")) {
+                if (!e.getPlayer().hasPermission("lws.regen")) {
+                    e.setCancelled(true);
+                    e.getPlayer().sendMessage("§cУ вас нет прав на эту команду.");
+                }
+            }
+        }
+
+    }
 }

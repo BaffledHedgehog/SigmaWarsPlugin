@@ -1,5 +1,6 @@
 package me.luckywars;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -160,6 +161,24 @@ public class RotateMapService {
 
     // утилитарный record для ключей
     private record Triple(int x, int y, int z) {
+    }
+
+
+    
+    public boolean isExcludedDimension(World world) {
+        try {
+            Method getHandle = world.getClass().getMethod("getHandle");
+            Object nmsWorld = getHandle.invoke(world);
+            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
+            Object resourceKey = dimMethod.invoke(nmsWorld);
+            Method locMethod = resourceKey.getClass().getMethod("location");
+            Object resourceLoc = locMethod.invoke(resourceKey);
+            Method toString = resourceLoc.getClass().getMethod("toString");
+            String dim = (String) toString.invoke(resourceLoc);
+            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

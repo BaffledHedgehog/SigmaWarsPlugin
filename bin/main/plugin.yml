@@ -17,7 +17,6 @@ commands:
   regen:
     description: Управление регенерацией
     usage: /regen <add|set|multiple> <value> <selector> [duration, 0 for infinite]
-    permission: sigmawars.regen
   motion:
     description: Управление вектором Motion у сущностей
     usage: /motion <set|add> <x> <y> <z> <цели>  или  /motion multiple <scalar> <цели>
@@ -25,16 +24,16 @@ commands:
   clonetonexus:
     description: Clone region 11x11x11 to Nexus at random coords
     usage: /clonetonexus
+    permission: lws.clonetonexus
   antigravity:
     description: antigravities blocks around
     usage: /antigravity
+    permission: lws.antigravity
 permissions:
   itemfix.reload:
     default: op
   rotatemap.use:
     description: "Позволяет использовать команду /rotatemap"
-    default: op
-  sigmawars.regen:
     default: op
   sigmawars.motion:
     default: op

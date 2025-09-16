@@ -17,6 +17,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,12 +46,13 @@ public class NexusCompass implements Listener {
     private final JavaPlugin plugin;
     private final NamespacedKey itemKey;
     private final NamespacedKey typeKey;
-    private final Objective cdObj;
+    private Objective cdObj;
     private final Gson gson = new Gson();
     private final Random random = new Random();
     private final ConcurrentHashMap<UUID, Integer> cooldowns = new ConcurrentHashMap<>();
     private static final int MAX_CD = 30; // seconds
 
+    @SuppressWarnings("deprecation")
     public NexusCompass(JavaPlugin plugin) {
         this.plugin = plugin;
         this.itemKey = new NamespacedKey(plugin, "item");
@@ -58,6 +61,9 @@ public class NexusCompass implements Listener {
         ScoreboardManager mgr = Bukkit.getScoreboardManager();
         Scoreboard sc = mgr.getMainScoreboard();
         this.cdObj = sc.getObjective("nexus_compass_cd");
+        if (cdObj == null) {
+            cdObj = sc.registerNewObjective("nexus_compass_cd", "dummy");
+        }
 
         // schedule cooldown decrement every second
         new BukkitRunnable() {
@@ -96,6 +102,14 @@ public class NexusCompass implements Listener {
             return;
 
         Player player = e.getPlayer();
+        if (isExcludedDimension(player.getWorld()) == true) {
+            return;
+        }
+
+        if (hasMagicStopperMarkerNearby(player, 20.0)) {
+            return;
+        }
+
         UUID id = player.getUniqueId();
         int cd = cooldowns.getOrDefault(id, 0);
         if (cd > 0) {
@@ -151,6 +165,16 @@ public class NexusCompass implements Listener {
             cdObj.getScore(player.getName()).setScore(MAX_CD);
     }
 
+    private boolean hasMagicStopperMarkerNearby(Player p, double radius) {
+        World w = p.getWorld();
+        for (Entity ent : w.getNearbyEntities(p.getLocation(), radius, radius, radius)) {
+            if (ent.getType() == EntityType.MARKER && ent.getScoreboardTags().contains("stopper_magic")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Checks PDC and, if absent, NBT for nexus_compass type.
      */
@@ -197,6 +221,22 @@ public class NexusCompass implements Listener {
             return "nexus_compass".equals(type);
         } catch (Exception ex) {
             // plugin.getLogger().warning("[NexusCompass] NBT reflection failed: " + ex);
+            return false;
+        }
+    }
+
+    public boolean isExcludedDimension(World world) {
+        try {
+            Method getHandle = world.getClass().getMethod("getHandle");
+            Object nmsWorld = getHandle.invoke(world);
+            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
+            Object resourceKey = dimMethod.invoke(nmsWorld);
+            Method locMethod = resourceKey.getClass().getMethod("location");
+            Object resourceLoc = locMethod.invoke(resourceKey);
+            Method toString = resourceLoc.getClass().getMethod("toString");
+            String dim = (String) toString.invoke(resourceLoc);
+            return "minecraft:imprinted".equals(dim);
+        } catch (Exception e) {
             return false;
         }
     }

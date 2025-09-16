@@ -59,6 +59,7 @@ public class NexusCloneCommand implements BasicCommand {
     private final Gson gson = new Gson();
 
     public NexusCloneCommand(JavaPlugin plugin) {
+        
         this.plugin = plugin;
         int threads = Math.max(1, Runtime.getRuntime().availableProcessors());
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
