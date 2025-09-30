@@ -113,12 +113,9 @@ public class RocketArmor implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player p = e.getPlayer();
-        if ((p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
-                && wearsRocketArmor(p)) {
-            UUID id = p.getUniqueId();
-            jumps.put(id, MAX_JUMPS);
-            cooldown.put(id, 0);
-        }
+        UUID id = p.getUniqueId();
+        jumps.put(id, MAX_JUMPS);
+        cooldown.put(id, 0);
     }
 
     @EventHandler
@@ -219,7 +216,6 @@ public class RocketArmor implements Listener {
     /**
      * Get existing objective or register a new one on given scoreboard.
      */
-    @SuppressWarnings("deprecation")
     private Objective getOrCreateObjective(Scoreboard sb, String name, String criteria) {
         Objective obj = sb.getObjective(name);
         if (obj == null) {

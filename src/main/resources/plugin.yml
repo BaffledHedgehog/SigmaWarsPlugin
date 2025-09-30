@@ -6,6 +6,8 @@ api-version: 1.21
 description: Lucky Wars Baffled Eblan Chorn Pild ZV Goida plugin 52 666 sigma
 authors: [GovnoSlav]
 softdepend: []
+bootstrapper: me.luckywars.bedwars.mixin.BedwarsMixinBootstrap
+depend: [FastAsyncWorldEdit]
 commands:
   reload:
     usage: /reload
@@ -29,6 +31,18 @@ commands:
     description: antigravities blocks around
     usage: /antigravity
     permission: lws.antigravity
+  buildmanager:
+    usage: /buildmanager
+  bedwars:
+    description: Bedwars protection controls
+    usage: /bedwars <init|stop>
+    permission: bedwarsprotector.admin
+  teaminit:
+    description: Distribute players to bed markers & init teams/spawns.
+    usage: /teaminit
+  mapclear:
+    description: Clear 4 region files around (0,0)
+    usage: /mapclear [world]
 permissions:
   itemfix.reload:
     default: op

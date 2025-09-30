@@ -45,20 +45,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"/>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc.paper/paper-api/1.21.8-R0.1-SNAPSHOT/d258b4cca4e34ef51f562ccdd226b2d26ff43e6d/paper-api-1.21.8-R0.1-SNAPSHOT-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc.paper/paper-api/1.21.8-R0.1-SNAPSHOT/1afdc21a255229fa86b344c8c324fd8d57c8eb3e/paper-api-1.21.8-R0.1-SNAPSHOT.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit/worldedit-bukkit/7.3.16/6e5199db17559918bad80dec54e2562f54cf7376/worldedit-bukkit-7.3.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit/worldedit-bukkit/7.3.16/be25d0d9e123c4f5d7b0e2d546b2d19d4b8e76dc/worldedit-bukkit-7.3.16.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fastasyncworldedit/FastAsyncWorldEdit-Bukkit/2.13.2/94e72f586f103f9f0b09f11dcba8fa6b65daba1b/FastAsyncWorldEdit-Bukkit-2.13.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fastasyncworldedit/FastAsyncWorldEdit-Bukkit/2.13.2/9d7ce587b400ef1f1c4669fd19db5705634c7991/FastAsyncWorldEdit-Bukkit-2.13.2.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit/worldedit-core/7.3.16/2510fd0e57b3330866378401669f7777011205fd/worldedit-core-7.3.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit/worldedit-core/7.3.16/c0b0c6d491452085314f8c0a7ac8dccbdbf782c5/worldedit-core-7.3.16.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
@@ -68,114 +58,169 @@
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
 	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/958671fbe7661c8cae6b1994014583332a14c7d5/mixin-0.8.5-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/33.3.1-jre/e788c9bc41ef2bcbb89794f793da9b576b5dde38/guava-33.3.1-jre-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/33.3.1-jre/852f8b363da0111e819460021ca693cacca3e8db/guava-33.3.1-jre.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/2ff7d686a7d9180a896643d264b96ea83d3673f7/bungeecord-chat-1.21-R0.2-deprecated+build.21-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/a87a9222a1dcfa429b4a06264899f65313a4ed5c/bungeecord-chat-1.21-R0.2-deprecated+build.21.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-logger-slf4j/4.24.0/15a2858b8b3444d52f296e186f3adde143b53ee1/adventure-text-logger-slf4j-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-logger-slf4j/4.24.0/c0e71d049e01b5f98f1ff5e01d0cb5e2db61a11e/adventure-text-logger-slf4j-4.24.0.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-minimessage/4.24.0/56d0b06ef4fd0dd0e0370fd6fba31c52c65b4aa4/adventure-text-minimessage-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-minimessage/4.24.0/64547cb2485d5fc8007aaf3bab0e75108745f1b6/adventure-text-minimessage-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-logger-slf4j/4.24.0/15a2858b8b3444d52f296e186f3adde143b53ee1/adventure-text-logger-slf4j-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-logger-slf4j/4.24.0/c0e71d049e01b5f98f1ff5e01d0cb5e2db61a11e/adventure-text-logger-slf4j-4.24.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-ansi/4.24.0/7b4b21c36ec01d8b580e28ae6000950b94943b09/adventure-text-serializer-ansi-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-ansi/4.24.0/db289da4f512440a4f134a121acd98ee4a2dfa29/adventure-text-serializer-ansi-4.24.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-legacy/4.24.0/82501fc88f4ec8655ae19936975295f9f9bf53fb/adventure-text-serializer-legacy-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-legacy/4.24.0/5361cdc81313bdd83aae0ce792e103e551c7dbec/adventure-text-serializer-legacy-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-plain/4.24.0/c9d79cb89e5ad37989785b46490f80dde1b4a81/adventure-text-serializer-plain-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-plain/4.24.0/dc075cfc900a6660c1f20fc29650f322a85754a2/adventure-text-serializer-plain-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-json/4.24.0/c884b03f115b4cecb6fae8f2dc2adeb664e34ae2/adventure-text-serializer-json-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-json/4.24.0/303b4fa233fc60b025a22a399049c726640d004c/adventure-text-serializer-json-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-api/4.24.0/8383ff26ac26a82d189a60f2f9268e180f9e1469/adventure-api-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-api/4.24.0/af2ff93942f237befc88e44140229afcaf322d99/adventure-api-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-key/4.24.0/754f157c636fd0eb9733553912a8bf97d6437f0b/adventure-key-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-key/4.24.0/ac70a5ba3c5485658da032044f127f824613f63a/adventure-key-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-gson/4.24.0/11300100fabada5e2ae3dec0be54fe2e141760d/adventure-text-serializer-gson-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-gson/4.24.0/23ef45e010ac5f4be65d114f14d621669cee6fca/adventure-text-serializer-gson-4.24.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.11.0/bbd772a8634d3d6fea7ffea693535a4bd1c773c0/gson-2.11.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.11.0/527175ca6d81050b53bdd4c457a6d6e017626b0e/gson-2.11.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/2.2/575a7915b847393207642575c139177ac2b2ac23/snakeyaml-2.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/2.2/3af797a25458550a16bf89acc8e4ab2b7f2bfce0/snakeyaml-2.2.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.joml/joml/1.10.8/3fa7a5a8a5119d23dbe3402f6ffa3df1b3d9598e/joml-1.10.8-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.joml/joml/1.10.8/fc0a71dad90a2cf41d82a76156a0e700af8e4f8d/joml-1.10.8.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/8.5.15/823800c6463db95d464e8a4ab3ce5898028b45f8/fastutil-8.5.15-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/8.5.15/1e885b40c9563ab0d3899b871fd0b30e958705dc/fastutil-8.5.15.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.minecrell/terminalconsoleappender/1.3.0/2fd4d796402a408af0d26c848e02ec8f91dceae7/terminalconsoleappender-1.3.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.minecrell/terminalconsoleappender/1.3.0/b562e9bb61235c9520e26282cdee71f8f802d1fc/terminalconsoleappender-1.3.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.24.1/f5a5261c171329e63f3f0888202f0ed23ab0390a/log4j-core-2.24.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.24.1/c85285146f28d8c8962384f786e2dff04172fb43/log4j-core-2.24.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-iostreams/2.24.1/9ed0ef9e4d93d248148172849fb9a0febafe3d51/log4j-iostreams-2.24.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-iostreams/2.24.1/9e63b5f1ab94f73eaf4c7b0655e2cff743528497/log4j-iostreams-2.24.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.24.1/63358d6542d9a55f2ff3e78aa19b7f8729101220/log4j-api-2.24.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.24.1/7ebeb12c20606373005af4232cd0ecca72613dda/log4j-api-2.24.1.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-resolver-provider/3.9.6/7a77fd34d816837109af6cc4a0ac68126e4e560d/maven-resolver-provider-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-resolver-provider/3.9.6/848c45d334f6cc5c8dd602b0e58fd4482964eddc/maven-resolver-provider-3.9.6.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-impl/1.9.18/da21bc5d4f6329c14aa60e4e9cbc7dbd13173cfc/maven-resolver-impl-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-impl/1.9.18/e928b128d1e52e6299f94431ce3df74647bc8c26/maven-resolver-impl-1.9.18.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-named-locks/1.9.18/bc415bfdb1c077c0c09507b3b1969bcb4474a5ce/maven-resolver-named-locks-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-named-locks/1.9.18/31f948d89dcb3d9739e70d5e1000ebd68eb4405d/maven-resolver-named-locks-1.9.18.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.16/68223612de5e53b90b752bbbe520390ae1f104db/slf4j-api-2.0.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.16/172931663a09a1fa515567af5fbef00897d3c04/slf4j-api-2.0.16.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/brigadier/1.3.10/d4b579a2b795ff6bfe5eb02760a2748d29addd2e/brigadier-1.3.10-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/brigadier/1.3.10/d15b53a14cf20fdcaa98f731af5dda654452c010/brigadier-1.3.10.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.spongepowered/configurate-yaml/4.2.0/970d710f1fff4aae66850e388de097f336794780/configurate-yaml-4.2.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.spongepowered/configurate-yaml/4.2.0/a61bc2dcbce867a3909529bd02c8224cbabbe7c1/configurate-yaml-4.2.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.spongepowered/configurate-core/4.2.0/c1e1d6aa464c88d5641941d29c766b03cd819daa/configurate-core-4.2.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.spongepowered/configurate-core/4.2.0/7b322107fae38a6b8d30690b6b512696c49d9d66/configurate-core-4.2.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/option/1.1.0/8789262bcbbcd0bf111797e5e3463e179b54a1c0/option-1.1.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/option/1.1.0/593fecb9c42688eebc7d8da5d6ea127f4d4c92a2/option-1.1.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/f1a67bbcf2f9f282baf3821046563983f16ca9b2/jspecify-1.0.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/reflection-rewriter/0.0.3/6964af479c0d54487d0b5b323d58e6094e51e09e/reflection-rewriter-0.0.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/reflection-rewriter/0.0.3/c43065d4497050890e216ef10827ab1f7e6f412e/reflection-rewriter-0.0.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/reflection-rewriter-runtime/0.0.3/db8ac0339f215fd8dc938d88c362de33c74051cc/reflection-rewriter-runtime-0.0.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/reflection-rewriter-runtime/0.0.3/e5cf62b00514dd6190b0dec0a0a7321ed436bf8b/reflection-rewriter-runtime-0.0.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/reflection-rewriter-proxy-generator/0.0.3/9c2c07d6e640cf36a955c83724f2228c63926451/reflection-rewriter-proxy-generator-0.0.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/reflection-rewriter-proxy-generator/0.0.3/77e5c0e3d9e70f51a052de63350f702301ffb4ee/reflection-rewriter-proxy-generator-0.0.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/asm-utils/0.0.3/aaa2858443e84258743bb807e7d72845f4c60678/asm-utils-0.0.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.papermc/asm-utils/0.0.3/36b1060ef8f1cddd8cc5882a86637781d3eee4d/asm-utils-0.0.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.49.5/f6aa5e830446fbe864dc30e300f6ab29b65133fc/checker-qual-3.49.5-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.49.5/f0d119b5a4adb4164e9d6fa9fd3ffa5d0e458963/checker-qual-3.49.5.jar">
@@ -183,7 +228,12 @@
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
 	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit.worldedit-libs/bukkit/7.3.16/95497735fd8c9d8d033ab08a42a120885f568163/bukkit-7.3.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit.worldedit-libs/bukkit/7.3.16/ad3724ccb216bd31714f3db54bd6ca0ae67a3241/bukkit-7.3.16.jar">
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fastasyncworldedit/FastAsyncWorldEdit-Libs-Core/2.13.2/a9a01a8b03b1afacb954c3dbced3f45bf994bd6a/FastAsyncWorldEdit-Libs-Core-2.13.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fastasyncworldedit/FastAsyncWorldEdit-Libs-Core/2.13.2/c2bddb178361e13f8620fa7dfb3187bfc8b7f669/FastAsyncWorldEdit-Libs-Core-2.13.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4/4.13.2/abaf427f8b0dcaaddd7a5f79e54e9f84853fc4b3/antlr4-4.13.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4/4.13.2/a2bc0d399506a7297568baee188b481727d45d3b/antlr4-4.13.2.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
@@ -195,7 +245,7 @@
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.lz4/lz4-java/1.8.0/7609c362f37f0c0bd3743bc1976df2daa28ad19e/lz4-java-1.8.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.lz4/lz4-java/1.8.0/4b986a99445e49ea5fbf5d149c4b63f6ed6c6780/lz4-java-1.8.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.zaxxer/SparseBitSet/1.3/1f0e3edb50238ddcc5a6588c0199e3839c00c7b2/SparseBitSet-1.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.zaxxer/SparseBitSet/1.3/533eac055afe3d5f614ea95e333afd6c2bde8f26/SparseBitSet-1.3.jar">
@@ -208,124 +258,129 @@
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
 	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/ca.spottedleaf/concurrentutil/0.0.3/121ecc632e6695277879992238d9b4f42715b5ea/concurrentutil-0.0.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/ca.spottedleaf/concurrentutil/0.0.3/63f2ac88616363f36ff1b796810133513150afa3/concurrentutil-0.0.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-terminal-ffm/3.27.1/da52714cece8e0cdb9fbfcecae6d85544f8c99ef/jline-terminal-ffm-3.27.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-terminal-ffm/3.27.1/ef894cf08d9375c7d6935f44e83583ee366f98b2/jline-terminal-ffm-3.27.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-terminal-jni/3.27.1/35ab3823cd6e78619a129453b6f8f3a0150e48f/jline-terminal-jni-3.27.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-terminal-jni/3.27.1/b5c841eabc71895061b8850cc8c2b988aa045952/jline-terminal-jni-3.27.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.velocitypowered/velocity-native/3.4.0-SNAPSHOT/4fdb1bb19df253baef8a9516f113017d156b549/velocity-native-3.4.0-SNAPSHOT.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-codec-haproxy/4.1.118.Final/5e670816b539e5c412012219d19c89e8cf9fb1a0/netty-codec-haproxy-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-codec-haproxy/4.1.118.Final/b8a82b07009c45de868245f8125d6f8002368613/netty-codec-haproxy-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-commons/9.8/49977bde316395824ded9e8e4deead6512f3c88/asm-commons-9.8-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-commons/9.8/36e4d212970388e5bd2c5180292012502df461bb/asm-commons-9.8.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.googlecode.json-simple/json-simple/1.1.1/15bba08e3a239d54b68209c001f9c911559d2fed/json-simple-1.1.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.googlecode.json-simple/json-simple/1.1.1/c9ad4a0850ab676c5c64461a05ca524cdfff59f1/json-simple-1.1.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged/AutoRenamingTool/2.0.3/fd4861eb08b4d392d90a0dc11fd516b171f789f2/AutoRenamingTool-2.0.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged/AutoRenamingTool/2.0.3/6f4e301832e5dcf159b2eee661983815d74e555e/AutoRenamingTool-2.0.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged/srgutils/1.0.9/607594bb63d2f7c38a5f32347abb79d010c94ef8/srgutils-1.0.9-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged/srgutils/1.0.9/d405df0d78c8b886b3996e048144d20875b09e12/srgutils-1.0.9.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/me.lucko/spark-api/0.1-20240720.200737-2/aff109f15c4c8c1a3d8d2d30cab60bcc9388e513/spark-api-0.1-20240720.200737-2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/me.lucko/spark-paper/1.10.133-20250413.112336-1/d7055fd50a1d8905b8e01aa3c1f9ad822e172a46/spark-paper-1.10.133-20250413.112336-1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.2/6acdafcf2dfc3b548e59dd3a4b454552aeb6ff65/failureaccess-1.0.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.2/c4a06a64e650562f30b7bf9aaec1bfed43aca12b/failureaccess-1.0.2.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/b421526c5f297295adef1c886e5246c39d4ac629/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/b19b5927c2c25b6c70f093767041e641ae0b1b35/jsr305-3.0.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.28.0/e8f57b15a91d274ff61195e53e9762f3232c690f/error_prone_annotations-2.28.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.28.0/59fc00087ce372de42e394d2c789295dff2d19f0/error_prone_annotations-2.28.0.jar">
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.36.0/2037dc2e9c13c3be8bfc1f346a02832a77372b4a/error_prone_annotations-2.36.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.36.0/227d4d4957ccc3dc5761bd897e3a0ee587e750a7/error_prone_annotations-2.36.0.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/3.0.0/e6e870c6faf70867a723848b036607cd7d389621/j2objc-annotations-3.0.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/3.0.0/7399e65dd7e9ff3404f4535b2f017093bdb134c7/j2objc-annotations-3.0.0.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-model-builder/3.9.6/f006cf5ef51213569e4987e99242f99dc3f25bdf/maven-model-builder-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-model-builder/3.9.6/983ce00d50a9f78ad1b805e21e4fd71807fa6ebf/maven-model-builder-3.9.6.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-model/3.9.6/500fba7a5b73d6b24b37fbef06ce05d76d8ddc56/maven-model-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-model/3.9.6/ac9a1c8a8cfa36f3a5489837e653ec0cd530d576/maven-model-3.9.6.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-repository-metadata/3.9.6/120ad7da7200f28c6fa1e44fbbd174ffd294cb64/maven-repository-metadata-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-repository-metadata/3.9.6/497cda3149f3c661113f9a663e0270ce2566cc95/maven-repository-metadata-3.9.6.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-spi/1.9.18/89e52e816af2d35fe261b812ed0f68c2d21ea6f7/maven-resolver-spi-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-spi/1.9.18/7fa176b3353ef6d78d02db39e025f3c27a983158/maven-resolver-spi-1.9.18.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-util/1.9.18/dcfdd5003f373a2c0eb2549c983b945de73a37eb/maven-resolver-util-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-util/1.9.18/5ae9406f188ae4a999c353fce3fd77273797a216/maven-resolver-util-1.9.18.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-api/1.9.18/4db186e57d54327998cf9923332c557ac18dcab0/maven-resolver-api-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-api/1.9.18/cd5174d6e80175398debe4869d484169c0abbf8/maven-resolver-api-1.9.18.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-artifact/3.9.6/e320a85bccc2645504152771d2ef86dabcc70edd/maven-artifact-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-artifact/3.9.6/fb0979832c10c1a25d038a33ca862bef055fcdc8/maven-artifact-3.9.6.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-utils/3.5.1/b9890d32e9293bf8e1e792d17346ff5482d3acb4/plexus-utils-3.5.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-utils/3.5.1/c6bfb17c97ecc8863e88778ea301be742c62b06d/plexus-utils-3.5.1.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/a00123f261762a7c5e0ec916a2c7c8298d29c400/javax.inject-1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar">
 		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit.worldedit-libs/core/7.3.16/72db5619109c2235c59d1139a133243981eb6d40/core-7.3.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.sk89q.worldedit.worldedit-libs/core/7.3.16/7cf2ea25aece22acacdca6b514f15c42bb2d6c0/core-7.3.16.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4/4.13.2/abaf427f8b0dcaaddd7a5f79e54e9f84853fc4b3/antlr4-4.13.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4/4.13.2/a2bc0d399506a7297568baee188b481727d45d3b/antlr4-4.13.2.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fastasyncworldedit/FastAsyncWorldEdit-Libs-Core/2.13.2/a9a01a8b03b1afacb954c3dbced3f45bf994bd6a/FastAsyncWorldEdit-Libs-Core-2.13.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fastasyncworldedit/FastAsyncWorldEdit-Libs-Core/2.13.2/c2bddb178361e13f8620fa7dfb3187bfc8b7f669/FastAsyncWorldEdit-Libs-Core-2.13.2.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-string/1.3.0/d06d07677cf2022bdf38136ba550aea9852cc1bd/examination-string-1.3.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-string/1.3.0/6f34afef5c54ccce4996bc321abf77518b55b4bd/examination-string-1.3.0.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-api/1.3.0/24ee397e9360897e1a5053e269be691abc611ca2/examination-api-1.3.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-api/1.3.0/8a2d185275307f1e2ef2adf7152b9a0d1d44c30b/examination-api-1.3.0.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/26.0.2/bfa27b5e683363963c8d5e2fec39d755295cbb82/annotations-26.0.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/26.0.2/c7ce3cdeda3d18909368dfe5977332dfad326c6d/annotations-26.0.2.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.auto.service/auto-service-annotations/1.1.1/b855be4f39e0fe5bb27dd137fd37dd4c4e2c2f5a/auto-service-annotations-1.1.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.auto.service/auto-service-annotations/1.1.1/da12a15cd058ba90a0ff55357fb521161af4736d/auto-service-annotations-1.1.1.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-interpolation/1.26/7182d32d452bbfedfe88ecd86245ef7b90048460/plexus-interpolation-1.26-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-interpolation/1.26/25b919c664b79795ccde0ede5cee0fd68b544197/plexus-interpolation-1.26.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-builder-support/3.9.6/7d6a7a1340ca92d3f8483652996cdddaf7b88e47/maven-builder-support-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-builder-support/3.9.6/bcfc9d8175eaba21111edf21e0355a8523461abc/maven-builder-support-3.9.6.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
-		</attributes>
-	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.eclipse.sisu/org.eclipse.sisu.inject/0.9.0.M2/616a449f1e1894b67b23ca64197a4cf4019e18a6/org.eclipse.sisu.inject-0.9.0.M2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.eclipse.sisu/org.eclipse.sisu.inject/0.9.0.M2/5ace70e1ea696d156f5034a42a615df13a52003a/org.eclipse.sisu.inject-0.9.0.M2.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4-runtime/4.13.2/391aff23db4000ad7a2fa02e182a3767f659c38d/antlr4-runtime-4.13.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.antlr/antlr4-runtime/4.13.2/fc3db6d844df652a3d5db31c87fa12757f13691d/antlr4-runtime-4.13.2.jar">
@@ -353,9 +408,352 @@
 			<attribute name="gradle_used_by_scope" value=""/>
 		</attributes>
 	</classpathentry>
-	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.12.0/198b882fdc2c72c89c63401d946f6ba46c3acea3/commons-lang3-3.12.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.12.0/c6842c86792ff03b9f1d1fe2aab8dc23aa6c6f0e/commons-lang3-3.12.0.jar">
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-reader/3.20.0/94a832964241f634f3b4a872e55241678227f28b/jline-reader-3.20.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-reader/3.20.0/8f15415b022a25b473e8e16c28ae913186ffb9c4/jline-reader-3.20.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-terminal/3.27.1/18797dfef02539d3d361eb5ff8ae948dceb91180/jline-terminal-3.27.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-terminal/3.27.1/49c957485701003855547d0d262a80bdced17613/jline-terminal-3.27.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-native/3.27.1/e54c16315be588dda4a16fad43949f8cca4d7858/jline-native-3.27.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jline/jline-native/3.27.1/d0b198908023385a089379a1c854aadc7a7dd99b/jline-native-3.27.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-codec/4.1.118.Final/b856e2e8135c144489767b92b458751a64a8373c/netty-codec-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-codec/4.1.118.Final/307f665c08ce57333121de4f460479fc0c3c94d4/netty-codec-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport/4.1.118.Final/b500a89c84eff977737d53c7fabbf5a9e69bf60f/netty-transport-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport/4.1.118.Final/5a27232e5d08218722d94ca14f0b1b4576e7711c/netty-transport-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.118.Final/2d4785c62bb7b405eb1be23c236c562afb9bb5da/netty-buffer-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-buffer/4.1.118.Final/7022990af1e0d449f9d5322035899745e19735c5/netty-buffer-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.8/d51ed23b9b4d0e222d0a0cacaf6296e8a009d81b/asm-tree-9.8-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.8/18419ca5b77a2f81097c741e7872e6ab8d2f40d/asm-tree-9.8.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/9.8/5879fb7cbff7dfd53380f120ed460d3bab6906ef/asm-9.8-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/9.8/dc19ecb3f7889b7860697215cae99c0f9b6f6b4b/asm-9.8.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged.installertools/cli-utils/2.1.4/4cfd8c09145c58bd174eff71751723252781089b/cli-utils-2.1.4-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged.installertools/cli-utils/2.1.4/e18572dea4622ad9ab9540bfcf1ebf88ff0131ec/cli-utils-2.1.4.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.13.4/f6b8a8daa9bcf7ece61c673e53f5d00b9e92e70e/jackson-annotations-2.13.4-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.13.4/858c6cc78e1f08a885b1613e1d817c829df70a6e/jackson-annotations-2.13.4.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.13.4/dd8da2766363ea64383d1344349acce91d5a5469/jackson-core-2.13.4-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.13.4/cf934c681294b97ef6d80082faeefbe1edadf56/jackson-core-2.13.4.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.13.4.2/99771ed18f5059ca6b4fb51142d7aa4a2eba9002/jackson-databind-2.13.4.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.13.4.2/325c06bdfeb628cfb80ebaaf1a26cc1eb558a585/jackson-databind-2.13.4.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.6.5/8be7bb74b13ca86e9f3cdc3a809d77771f7d0062/oshi-core-6.6.5-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.6.5/e1099981fd15dc4236c4499d82aba1276fb43a9a/oshi-core-6.6.5.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.github.stephenc.jcip/jcip-annotations/1.0-1/2064ac5ff426f3c02656aedc317952b82463782f/jcip-annotations-1.0-1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.github.stephenc.jcip/jcip-annotations/1.0-1/ef31541dd28ae2cefdd17c7ebf352d93e9058c63/jcip-annotations-1.0-1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.microsoft.azure/msal4j/1.17.2/dfc737bc41b4570e2da52be203b3d4a4b35bea33/msal4j-1.17.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.microsoft.azure/msal4j/1.17.2/a6211e3d71d0388929babaa0ff0951b30d001852/msal4j-1.17.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/authlib/6.0.58/c29fd63b7dd4c20ed0a7c0f83405dd6c484a6ff9/authlib-6.0.58-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/authlib/6.0.58/9261a6d53e629469fab20136b968bf5202d9c0f7/authlib-6.0.58.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/datafixerupper/8.0.16/1482506562a012761c60594c23f6bcbeb0d354a3/datafixerupper-8.0.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/datafixerupper/8.0.16/67d4de6d7f95d89bcf5862995fb854ebaec02a34/datafixerupper-8.0.16.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/jtracy/1.0.29/335f3d8b2db1fd977b541c7e7a25133e5e10f1d1/jtracy-1.0.29-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/jtracy/1.0.29/6f07dcb6a2e595c7ee2ca43b67e5d1c018ca0770/jtracy-1.0.29.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/logging/1.5.10/cf41b5ead0d671bc70afd981fc4be9ede5dacb14/logging-1.5.10-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mojang/logging/1.5.10/9ab1202793717af9df9c1704d0a02892067001eb/logging-1.5.10.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/content-type/2.3/353fffcaafbd9624e6e13af3f74aa772ccfe30ef/content-type-2.3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/content-type/2.3/e3aa0be212d7a42839a8f3f506f5b990bcce0222/content-type-2.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/lang-tag/1.7/8ebac7ea14da04f2c11ab3e56583abe246346477/lang-tag-1.7-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/lang-tag/1.7/97c73ecd70bc7e8eefb26c5eea84f251a63f1031/lang-tag-1.7.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/nimbus-jose-jwt/9.40/1454a59e5d91f70fdafeab83d4d395379947ca3c/nimbus-jose-jwt-9.40-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/nimbus-jose-jwt/9.40/42b1dfa0360e4062951b070bac52dd8d96fd7b38/nimbus-jose-jwt-9.40.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/oauth2-oidc-sdk/11.18/d96bef00c004c72a622163cbc7ece51ed4b27cc9/oauth2-oidc-sdk-11.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.nimbusds/oauth2-oidc-sdk/11.18/7c7ec4f4066625ff07a711ad856fa04da1ff9de/oauth2-oidc-sdk-11.18.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.17.0/28415dc64e3a2e8a90751fd59a21bad0fe5681dc/commons-io-2.17.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.17.0/ddcc8433eb019fb48fe25207c0278143f3e1d7e2/commons-io-2.17.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-resolver/4.1.118.Final/a6fa4618f0894177546187c60d6997e1fcbf7edf/netty-resolver-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-resolver/4.1.118.Final/28c378c19c1779eca1104b400452627f3ebc4aea/netty-resolver-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-common/4.1.118.Final/443f79dfdd99384c8d1cee3864fedd16b2944818/netty-common-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-common/4.1.118.Final/4bb0f9899146484fa89f7b9bc27389d5b8e2ecde/netty-common-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-handler/4.1.118.Final/e10de5aaaa4adb0c89d1dc315e573831f3c44c63/netty-handler-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-handler/4.1.118.Final/30ebb05b6b0fb071dbfcf713017c4a767a97bb9b/netty-handler-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-classes-epoll/4.1.118.Final/4a4e7f5dc7e365918541029240b761c0816327c9/netty-transport-classes-epoll-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-classes-epoll/4.1.118.Final/376ce95507066f0e755d97c1c8bcd6c33f657617/netty-transport-classes-epoll-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.118.Final/5ee728dc59bcd335b42ef10cd7c8b19fba698244/netty-transport-native-epoll-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.118.Final/7e6b89e3746acb7cf6f0aad993bbd058fc6d912e/netty-transport-native-epoll-4.1.118.Final-linux-x86_64.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.118.Final/5ee728dc59bcd335b42ef10cd7c8b19fba698244/netty-transport-native-epoll-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-native-epoll/4.1.118.Final/82f94d0a9d837f6b6a580379373310ff7288c0f8/netty-transport-native-epoll-4.1.118.Final-linux-aarch_64.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-native-unix-common/4.1.118.Final/2897b8d1f24499c88089ec23421753dd7fc1739b/netty-transport-native-unix-common-4.1.118.Final-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.netty/netty-transport-native-unix-common/4.1.118.Final/9da25a94e6a0edac90da0bc7894e5a54efcb866b/netty-transport-native-unix-common-4.1.118.Final.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/5.15.0/f84631ed8ab3610424139df0baf36a0756336e8d/jna-5.15.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/5.15.0/1ee1d80ff44f08280188f7c0e740d57207841ac/jna-5.15.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna-platform/5.15.0/712d5f4d00130b3727a653dc3aca63921fab671f/jna-platform-5.15.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna-platform/5.15.0/86b502cad57d45da172b5e3231c537b042e296ef/jna-platform-5.15.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.minidev/accessors-smart/2.5.1/1301d502f3d849f1966e56acdc446436dab8b504/accessors-smart-2.5.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.minidev/accessors-smart/2.5.1/19b820261eb2e7de7d5bde11d1c06e4501dd7e5f/accessors-smart-2.5.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.minidev/json-smart/2.5.1/45abd4dda57f72e56d16aefc4d895a311afd751b/json-smart-2.5.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.minidev/json-smart/2.5.1/4c11d2808d009132dfbbf947ebf37de6bf266c8e/json-smart-2.5.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.4/950831646d014c9162999019a3cb17d5fc01ac0d/jopt-simple-5.0.4-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.4/4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c/jopt-simple-5.0.4.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.17.0/f409092a9f723034a839327029255900a19742b4/commons-lang3-3.17.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.17.0/b17d2136f0460dcc0d2016ceefca8723bdf4ee70/commons-lang3-3.17.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-slf4j2-impl/2.24.1/c43f57c4a1d1a6ddc15e3d7d00dbd548cbbc6f14/log4j-slf4j2-impl-2.24.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-slf4j2-impl/2.24.1/8e3ddc96464ef7f768823e7e001a52b23de8cd0a/log4j-slf4j2-impl-2.24.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-string/1.3.0/d06d07677cf2022bdf38136ba550aea9852cc1bd/examination-string-1.3.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-string/1.3.0/6f34afef5c54ccce4996bc321abf77518b55b4bd/examination-string-1.3.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-api/1.3.0/24ee397e9360897e1a5053e269be691abc611ca2/examination-api-1.3.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/examination-api/1.3.0/8a2d185275307f1e2ef2adf7152b9a0d1d44c30b/examination-api-1.3.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/ansi/1.1.1/9669dfec0bb1678a4514ab07ade2a27d9df02041/ansi-1.1.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/ansi/1.1.1/beeb71e49b25cac87c22975014e74c7b5940d1b7/ansi-1.1.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/26.0.2/bfa27b5e683363963c8d5e2fec39d755295cbb82/annotations-26.0.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/26.0.2/c7ce3cdeda3d18909368dfe5977332dfad326c6d/annotations-26.0.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.auto.service/auto-service-annotations/1.1.1/b855be4f39e0fe5bb27dd137fd37dd4c4e2c2f5a/auto-service-annotations-1.1.1-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.auto.service/auto-service-annotations/1.1.1/da12a15cd058ba90a0ff55357fb521161af4736d/auto-service-annotations-1.1.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-interpolation/1.26/7182d32d452bbfedfe88ecd86245ef7b90048460/plexus-interpolation-1.26-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.codehaus.plexus/plexus-interpolation/1.26/25b919c664b79795ccde0ede5cee0fd68b544197/plexus-interpolation-1.26.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-builder-support/3.9.6/7d6a7a1340ca92d3f8483652996cdddaf7b88e47/maven-builder-support-3.9.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-builder-support/3.9.6/bcfc9d8175eaba21111edf21e0355a8523461abc/maven-builder-support-3.9.6.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.eclipse.sisu/org.eclipse.sisu.inject/0.9.0.M2/616a449f1e1894b67b23ca64197a4cf4019e18a6/org.eclipse.sisu.inject-0.9.0.M2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.eclipse.sisu/org.eclipse.sisu.inject/0.9.0.M2/5ace70e1ea696d156f5034a42a615df13a52003a/org.eclipse.sisu.inject-0.9.0.M2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.leangen.geantyref/geantyref/1.3.16/c6a380ef0ef524493d111cf63468f7c8c79f986d/geantyref-1.3.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/io.leangen.geantyref/geantyref/1.3.16/177fe050a1ecc6f121bd3ffa511f2f5ce9099f00/geantyref-1.3.16.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.49.2/64aa2692b3be1d8b4d507b5d5c3944dbcc90baed/checker-qual-3.49.2-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.49.2/98ac669ccce59dba8ca360d3e07891d62b6b946a/checker-qual-3.49.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/67313d715fbf0ea4fd0bdb69217fb77f807a8ce5/commons-lang-2.6-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.xerial/sqlite-jdbc/3.49.1.0/7c3f0ebcf0b11736cf50c3173beaae0c46f00714/sqlite-jdbc-3.49.1.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.xerial/sqlite-jdbc/3.49.1.0/145d3a6819b86f3618728273329392269104c8c7/sqlite-jdbc-3.49.1.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mysql/mysql-connector-j/9.2.0/8d2704a7699b0079bd950778c98d707bb5bba37d/mysql-connector-j-9.2.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.mysql/mysql-connector-j/9.2.0/cc7bed59ccee3c47554aeb89e37c24d95a74bec3/mysql-connector-j-9.2.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.lmax/disruptor/3.4.4/3cf50ab87341f240fe689ad3ac9b9d1bf54897d5/disruptor-3.4.4-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.lmax/disruptor/3.4.4/588321627643b6de45db44c6575e750fea3ae3f5/disruptor-3.4.4.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-commons/4.24.0/d4dd39b74b09b917549afd1020a1872fb9cf6187/adventure-text-serializer-commons-4.24.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.kyori/adventure-text-serializer-commons/4.24.0/9f5a467ba9db7946139a22d19187d678112546b3/adventure-text-serializer-commons-4.24.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/4.29.0/101c58104cdd4b273b683aa034f780052540661c/protobuf-java-4.29.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/4.29.0/ffea90ab158435d68de76951857ef5f8b0f98365/protobuf-java-4.29.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-connector-basic/1.9.18/a7c53e61e5fd45a0e72636fcdd9b5fc6555cf8a8/maven-resolver-connector-basic-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-connector-basic/1.9.18/baac1ca4eb5e5fbdd2df554262a1b97f84ae3cec/maven-resolver-connector-basic-1.9.18.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-transport-http/1.9.18/fb28b76ea6de60053fc6648ade81101bbc451c9f/maven-resolver-transport-http-1.9.18-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.maven.resolver/maven-resolver-transport-http/1.9.18/61a5512ff44502a5b22800f097f43281cb934a72/maven-resolver-transport-http-1.9.18.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged.javadoctor/gson-io/2.0.17/aea31ca84351c92749d35fc605ae4ff530eeec6c/gson-io-2.0.17-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged.javadoctor/gson-io/2.0.17/40edf7077205615bffe214a9d250c50cd0d13de/gson-io-2.0.17.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/1.7.36/91b21b162173dfc6bb676bc7f4865cdd268eac68/jcl-over-slf4j-1.7.36-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/1.7.36/d877e195a05aca4a2f1ad2ff14bfec1393af4b5e/jcl-over-slf4j-1.7.36.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/6.0-alpha-3/d8b6ef633e27e1b019878292de8d04177a69ca19/jopt-simple-6.0-alpha-3-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/6.0-alpha-3/2ab1a73e1e22d2b73469362a0908a98644b681d/jopt-simple-6.0-alpha-3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.14/14321a360aa0e037c56d4c820747a84954d9196e/httpclient-4.5.14-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.14/1194890e6f56ec29177673f2f12d0b8e627dec98/httpclient-4.5.14.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.16/229e4c0eae80465381ae02adf61bca5558360777/httpcore-4.4.16-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.16/51cf043c87253c9f58b539c9f7e44c8894223850/httpcore-4.4.16.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.16.0/57c67a979689051a455570196d0f48134db9909e/commons-codec-1.16.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.16.0/4e3eb3d79888d76b54e28b350915b5dc3919c9de/commons-codec-1.16.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.43.0/dfd1d5ec59d04e7bd1ad44e74da445b880cfc2e1/checker-qual-3.43.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.43.0/9425eee39e56b116d2b998b7c2cebcbd11a3c98b/checker-qual-3.43.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.28.0/e8f57b15a91d274ff61195e53e9762f3232c690f/error_prone_annotations-2.28.0-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.28.0/59fc00087ce372de42e394d2c789295dff2d19f0/error_prone_annotations-2.28.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged.javadoctor/spec/2.0.17/e76140ea31ae8576cb97d987b1e8900d66c9dc78/spec-2.0.17-sources.jar" kind="lib" path="C:/Users/yarik_temp/.gradle/caches/modules-2/files-2.1/net.neoforged.javadoctor/spec/2.0.17/fbe5da0da41957dccf9004014781bd8d05d16192/spec-2.0.17.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="E:/servers_mew/cringe1_21_4_skywars/plugins/itemfix/.gradle/caches/paperweight/taskCache/mappedServerJar.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
 		</attributes>
 	</classpathentry>
 </classpath>

@@ -34,9 +34,13 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.function.pattern.AbstractPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
+import com.sk89q.worldedit.function.pattern.Pattern;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -59,7 +63,7 @@ public class NexusCloneCommand implements BasicCommand {
     private final Gson gson = new Gson();
 
     public NexusCloneCommand(JavaPlugin plugin) {
-        
+
         this.plugin = plugin;
         int threads = Math.max(1, Runtime.getRuntime().availableProcessors());
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
@@ -133,7 +137,13 @@ public class NexusCloneCommand implements BasicCommand {
                 // Phase 2: clear source
                 try (EditSession clear = WorldEdit.getInstance()
                         .newEditSessionBuilder().world(weSrc).maxBlocks(Integer.MAX_VALUE).build()) {
-                    clear.setBlocks(region, com.sk89q.worldedit.world.block.BlockTypes.AIR.getDefaultState());
+
+                    clear.replaceBlocks(
+                            region,
+                            (java.util.Set<BaseBlock>) null, // явно выбираем перегрузку с Set<BaseBlock>
+                            BlockTypes.AIR.getDefaultState() // любой Pattern тут ок
+                    );
+
                 }
 
                 // Phase 3: finalize on main thread

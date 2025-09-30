@@ -1,10 +1,12 @@
 plugins {
     id 'java'
     id 'eclipse'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.18'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'me.luckywars'
-version = '1.0.6'
+version = '1.0.7'
 
 java {
     toolchain {
@@ -14,27 +16,54 @@ java {
 
 repositories {
     maven {
+        name = "sponge"
+        url = "https://repo.spongepowered.org/repository/maven-public/"
+    }
+    mavenCentral {
+        content { excludeGroup "org.spongepowered" }
+    }
+    maven {
         name = 'papermc'
         url  = 'https://repo.papermc.io/repository/maven-public/'
     }
-    mavenCentral()
     maven {
         name = 'EngineHub'
         url  = 'https://maven.enginehub.org/repo/'
     }
+    maven {
+        name = 'FastAsyncWorldEdit'
+        url = 'https://mvn.intellectualsites.com/content/repositories/snapshots/' 
+    }
+    mavenLocal()
 }
 
 dependencies {
+    paperweight.paperDevBundle('1.21.8-R0.1-SNAPSHOT')
     // Paper API
     compileOnly 'io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT'
-
-    // WorldEdit Bukkit API — use 7.3.14, the latest published 7.3.x build :contentReference[oaicite:0]{index=0}
-    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.3.16'
-
     // FastAsyncWorldEdit Bukkit API
+    compileOnly "com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.13.2"
     compileOnly 'com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.13.2'
+
+  compileOnly "space.vectrix.ignite:ignite-api:1.1.0"
+  compileOnly "net.fabricmc:sponge-mixin:0.15.2+mixin.0.8.7"
+  compileOnly "io.github.llamalad7:mixinextras-common:0.4.1"
+    
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+// Собираем теневой джар и даём его на реобфускацию
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+  // никаких annotationProcessor и никаких -AoutRefMap
+}
+
+tasks.jar {}
+
+// paperweight реобфусцирует shadowJar автоматически, если он есть
+tasks.assemble {
+    dependsOn tasks.reobfJar
 }
