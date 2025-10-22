@@ -59,7 +59,7 @@ public final class TeamChestManager implements Listener {
         final String key = keyOf(b);
         removeMarker(key); // на всякий
 
-        final Location loc = b.getLocation().add(0.5, 0.0, 0.5); // align xyz; positioned ~.5 ~ ~.5
+        final Location loc = b.getLocation(); // align xyz; positioned ~.5 ~ ~.5
         final Material glass = DyeColorOfTeam.stainedGlassOf(dc);
 
         BlockDisplay bd = b.getWorld().spawn(loc, BlockDisplay.class, d -> {

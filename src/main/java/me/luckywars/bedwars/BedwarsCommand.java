@@ -44,7 +44,7 @@ public final class BedwarsCommand implements CommandExecutor, TabCompleter {
             BeaconEffectsManager.resetAll();
 
             mgr.initAt(origin);
-            sender.sendMessage("§aЗащита включена: центр (0, " + origin.getBlockY() + ", 0), радиус ±192 по X/Z.");
+            sender.sendMessage("§aЗащита включена: центр (0, " + origin.getBlockY() + ", 0), радиус ±384 по X/Z.");
             return true;
 
         } else if (sub.equals("stop")) {

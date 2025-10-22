@@ -47,7 +47,7 @@ public final class BeaconEffectsManager {
                     continue;
 
                 applyIf(p, m, Buff.SPEED2, PotionEffectType.SPEED, 1);
-                applyIf(p, m, Buff.JUMP2, PotionEffectType.JUMP_BOOST, 1);
+                applyIf(p, m, Buff.JUMP2, PotionEffectType.JUMP_BOOST, 2);
                 applyIf(p, m, Buff.FIRE_RES, PotionEffectType.FIRE_RESISTANCE, 0);
                 applyIf(p, m, Buff.STRENGTH2, PotionEffectType.STRENGTH, 1);
                 applyIf(p, m, Buff.HASTE2, PotionEffectType.HASTE, 1);

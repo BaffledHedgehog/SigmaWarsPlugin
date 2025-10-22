@@ -52,6 +52,8 @@ public final class BedwarsShopGui {
     }
 
     public void handleCategoryClick(int topRowSlot) {
+        boolean showLucky = luckyTabVisible();
+
         switch (topRowSlot) {
             case 0 -> current = Category.ARMOR;
             case 1 -> current = Category.WEAPONS;
@@ -59,7 +61,10 @@ public final class BedwarsShopGui {
             case 3 -> current = Category.FOOD;
             case 4 -> current = Category.BLOCKS;
             case 5 -> current = Category.SPECIAL;
-            case 6 -> current = Category.LUCKY;
+            case 6 -> {
+                if (showLucky)
+                    current = Category.LUCKY;
+            }
             case 7 -> current = Category.ENCHANTS;
             case 8 -> current = Category.BEACONS;
             default -> {
@@ -97,7 +102,10 @@ public final class BedwarsShopGui {
         // Bukkit.getLogger().info("[Shop] item_model=" + (im != null ?
         // im.getItemModel() : null));
 
-        inv.setItem(6, iconWithModel(Material.STICK, "category_lucky_blocks", "lbc:lucky_block"));
+        boolean showLucky = luckyTabVisible();
+        if (showLucky) {
+            inv.setItem(6, iconWithModel(Material.STICK, "category_lucky_blocks", "lbc:lucky_block"));
+        }
         inv.setItem(7, icon(Material.ENCHANTING_TABLE, "category_enchantments"));
         inv.setItem(8, icon(Material.BEACON, "category_beacons"));
 
@@ -146,13 +154,13 @@ public final class BedwarsShopGui {
                 price().iron(4).gold(4), 1);
 
         addItem(41, enchanted(new ItemStack(Material.DIAMOND_HELMET), Enchantment.PROTECTION, 1), "dia_helm_p1",
-                price().gold(5), 1);
+                price().gold(5).diamond(3), 1);
         addItem(42, enchanted(new ItemStack(Material.DIAMOND_CHESTPLATE), Enchantment.PROTECTION, 1), "dia_chest_p1",
-                price().diamond(5), 1);
+                price().gold(8).diamond(3), 1);
         addItem(43, enchanted(new ItemStack(Material.DIAMOND_LEGGINGS), Enchantment.PROTECTION, 1), "dia_legs_p1",
-                price().gold(8).diamond(8), 1);
+                price().gold(7).diamond(3), 1);
         addItem(44, enchanted(new ItemStack(Material.DIAMOND_BOOTS), Enchantment.PROTECTION, 1), "dia_boots_p1",
-                price().gold(4).diamond(4), 1);
+                price().gold(4).diamond(3), 1);
     }
 
     private void buildWeapons() {
@@ -324,7 +332,7 @@ public final class BedwarsShopGui {
                 (p, times) -> EnchantOps.enchantArmorAll(p, times));
 
         addButton(30, new ItemStack(Material.IRON_SWORD), "enchant_weapon",
-                price().netherStar(10),
+                price().netherStar(5),
                 (p, times) -> EnchantOps.enchantWeapons(p, times));
 
         addButton(31, new ItemStack(Material.IRON_PICKAXE), "enchant_tool",
@@ -332,11 +340,11 @@ public final class BedwarsShopGui {
                 (p, times) -> EnchantOps.enchantToolsEfficiency(p, times));
 
         addButton(32, new ItemStack(Material.BOW), "enchant_bow",
-                price().netherStar(25),
+                price().netherStar(15),
                 (p, times) -> EnchantOps.enchantBowsStrong(p, times));
 
         addButton(33, new ItemStack(Material.STICK), "upgrade_knockback",
-                price().netherStar(10),
+                price().netherStar(5),
                 (p, times) -> EnchantOps.upgradeKnockback(p, times));
     }
 
@@ -424,7 +432,7 @@ public final class BedwarsShopGui {
             DyeColor color, int prot,
             Price pHelm, Price pChest, Price pLegs, Price pBoots) {
         addItem(slotHelm, leather(Material.LEATHER_HELMET, color, prot), "leather_helm_p1", pHelm, 1);
-        addItem(slotChest, leather(Material.LEATHER_CHESTPLATE, color, prot), "leather_chest_p1", pChest, 1);
+        addItem(slotChest, leather(Material.LEATHER_CHESTPLATE, color, prot), "leather_chest_p1", pChest, 2);
         addItem(slotLegs, leather(Material.LEATHER_LEGGINGS, color, prot), "leather_legs_p1", pLegs, 1);
         addItem(slotBoots, leather(Material.LEATHER_BOOTS, color, prot), "leather_boots_p1", pBoots, 1);
     }
@@ -711,5 +719,14 @@ public final class BedwarsShopGui {
 
     private static void setPriceLore(ItemStack stack, Price p) {
         stack.editMeta(m -> m.lore(priceLore(p)));
+    }
+
+    private boolean luckyTabVisible() {
+        // Гарантируется наличие objective и entry — без дополнительных проверок:
+        return Bukkit.getScoreboardManager()
+                .getMainScoreboard()
+                .getObjective("swrg.math")
+                .getScore("#gamemode")
+                .getScore() != 3;
     }
 }

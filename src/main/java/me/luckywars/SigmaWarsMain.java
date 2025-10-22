@@ -184,9 +184,9 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
         MetalPipe metalPipe = new MetalPipe(this);
         getServer().getPluginManager().registerEvents(metalPipe, this);
 
-        // getCommand("motion").setTabCompleter(motionHandler);
-        Objects.requireNonNull(getCommand("motion")).setExecutor(new MotionCommand());
-        Objects.requireNonNull(getCommand("motion")).setTabCompleter(new MotionCommand());
+        this.getLifecycleManager().registerEventHandler(
+                LifecycleEvents.COMMANDS,
+                commands -> commands.registrar().register("motion", new MotionBrigadier()));
 
         // regeneration
         // 1) создаём экземпляр Regeneration, передаём this (JavaPlugin)

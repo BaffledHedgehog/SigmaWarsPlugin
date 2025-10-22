@@ -31,10 +31,10 @@ public final class BedwarsRegionManager {
             return;
         worldId = w.getUID();
         int cx = center.getBlockX(), cz = center.getBlockZ();
-        minX = cx - 192;
-        maxX = cx + 192;
-        minZ = cz - 192;
-        maxZ = cz + 192;
+        minX = cx - 384;
+        maxX = cx + 384;
+        minZ = cz - 384;
+        maxZ = cz + 384;
 
         snapshot.clear();
 
