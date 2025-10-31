@@ -107,15 +107,15 @@ public final class MotionBrigadier implements BasicCommand {
                 double ly = parseCaret(sy);
                 double lz = parseCaret(sz);
                 finalVec = localToWorld(basis, lx, ly, lz);
-                //debug(source, "SET(^): %s -> local=(%.3f,%.3f,%.3f) world=%s",
-                //        entInfo(ent), lx, ly, lz, vecStr(finalVec));
+                // debug(source, "SET(^): %s -> local=(%.3f,%.3f,%.3f) world=%s",
+                // entInfo(ent), lx, ly, lz, vecStr(finalVec));
             } else {
                 double x = parseSetComponent(sx, current.getX());
                 double y = parseSetComponent(sy, current.getY());
                 double z = parseSetComponent(sz, current.getZ());
                 finalVec = new Vector(x, y, z);
-                //debug(source, "SET(~/abs): %s -> cur=%s final=%s",
-                //        entInfo(ent), vecStr(current), vecStr(finalVec));
+                // debug(source, "SET(~/abs): %s -> cur=%s final=%s",
+                // entInfo(ent), vecStr(current), vecStr(finalVec));
             }
 
             finalVec = capVector(finalVec);
@@ -151,15 +151,15 @@ public final class MotionBrigadier implements BasicCommand {
                 double ly = parseCaret(sy);
                 double lz = parseCaret(sz);
                 delta = localToWorld(basis, lx, ly, lz);
-                //debug(source, "ADD(^): %s -> local=(%.3f,%.3f,%.3f) delta=%s",
-                //        entInfo(ent), lx, ly, lz, vecStr(delta));
+                // debug(source, "ADD(^): %s -> local=(%.3f,%.3f,%.3f) delta=%s",
+                // entInfo(ent), lx, ly, lz, vecStr(delta));
             } else {
                 double dx = parseAddComponent(sx);
                 double dy = parseAddComponent(sy);
                 double dz = parseAddComponent(sz);
                 delta = new Vector(dx, dy, dz);
-                //debug(source, "ADD(~/abs): %s -> cur=%s delta=%s",
-                //        entInfo(ent), vecStr(current), vecStr(delta));
+                // debug(source, "ADD(~/abs): %s -> cur=%s delta=%s",
+                // entInfo(ent), vecStr(current), vecStr(delta));
             }
 
             Vector result = current.clone().add(delta);
@@ -196,11 +196,18 @@ public final class MotionBrigadier implements BasicCommand {
             Vector result = current.clone().multiply(scalar);
             result = capVector(result);
             ent.setVelocity(result);
-            //debug(source, "MULT: %s -> cur=%s * %.3f = %s",
-            //        entInfo(ent), vecStr(current), scalar, vecStr(result));
+            // debug(source, "MULT: %s -> cur=%s * %.3f = %s",
+            // entInfo(ent), vecStr(current), scalar, vecStr(result));
         }
     }
 
+    private @org.jetbrains.annotations.Nullable CommandSender tryGetSender(CommandSourceStack source) {
+        try {
+            return source.getSender();
+        } catch (UnsupportedOperationException ex) {
+            return null;
+        }
+    }
     // ==== parsing/selectors ====
 
     private Collection<Entity> resolveTargets(CommandSourceStack source, String targetArg) {
@@ -208,10 +215,10 @@ public final class MotionBrigadier implements BasicCommand {
         if ("@s".equals(targetArg)) {
             Entity exec = source.getExecutor();
             if (exec != null) {
-                info(source, "executor '@s' -> %s", entInfo(exec));
+                // info(source, "executor '@s' -> %s", entInfo(exec));
                 return Collections.singleton(exec);
             } else if (source.getSender() instanceof Entity e) {
-                info(source, "sender-as '@s' -> %s", entInfo(e));
+                // info(source, "sender-as '@s' -> %s", entInfo(e));
                 return Collections.singleton(e);
             } else {
                 warn(source, "'@s' has no executor (sender=%s)", source.getSender().getClass().getSimpleName());
@@ -221,35 +228,27 @@ public final class MotionBrigadier implements BasicCommand {
 
         // Сначала — как есть, с текущим sender (Console в твоём кейсе)
         if (targetArg.startsWith("@")) {
+            // 1) якорим селекторы на EXECUTOR, если он игрок; иначе — на sender; иначе — на
+            // консоль
+            Entity exec = source.getExecutor();
+            CommandSender fallback = tryGetSender(source);
+            CommandSender anchor = (exec instanceof Player p) ? p
+                    : (fallback != null ? fallback : Bukkit.getConsoleSender());
+
             try {
-                Collection<Entity> sel = Bukkit.selectEntities(source.getSender(), targetArg);
-                info(source, "selector '%s' by sender(%s) -> %d target(s)",
-                        targetArg, source.getSender().getClass().getSimpleName(), sel.size());
+                Collection<Entity> sel = Bukkit.selectEntities(anchor, targetArg);
                 if (!sel.isEmpty())
                     return sel;
             } catch (IllegalArgumentException ex) {
-                warn(source, "selector parse failed by sender for '%s': %s", targetArg, ex.getMessage());
+                warn(source, "selector parse failed for '%s': %s", targetArg, ex.getMessage());
             }
-
-            // Повторяем с EXECUTOR как sender — это ключ для @s и многих execute-кейсов
-            Entity exec = source.getExecutor();
-            if (exec != null) {
-                try {
-                    Collection<Entity> sel = Bukkit.selectEntities(exec, targetArg);
-                    info(source, "selector '%s' by executor(%s) -> %d target(s)",
-                            targetArg, exec.getType().name(), sel.size());
-                    if (!sel.isEmpty())
-                        return sel;
-                } catch (IllegalArgumentException ex) {
-                    warn(source, "selector parse failed by executor for '%s': %s", targetArg, ex.getMessage());
-                }
-            }
+            return java.util.Collections.emptyList();
         }
 
         // Имя игрока
         Player p = Bukkit.getPlayerExact(targetArg);
         if (p != null) {
-            info(source, "name '%s' -> 1 player", targetArg);
+            // info(source, "name '%s' -> 1 player", targetArg);
             return Collections.singleton(p);
         }
 
@@ -259,7 +258,7 @@ public final class MotionBrigadier implements BasicCommand {
             for (World w : Bukkit.getWorlds()) {
                 for (Entity e : w.getEntities()) {
                     if (uuid.equals(e.getUniqueId())) {
-                        info(source, "uuid '%s' -> %s", targetArg, entInfo(e));
+                        // info(source, "uuid '%s' -> %s", targetArg, entInfo(e));
                         return Collections.singleton(e);
                     }
                 }
@@ -273,7 +272,7 @@ public final class MotionBrigadier implements BasicCommand {
             for (World w : Bukkit.getWorlds()) {
                 for (Entity e : w.getEntities()) {
                     if (e.getEntityId() == id) {
-                        info(source, "numeric id %d -> %s", id, entInfo(e));
+                        // info(source, "numeric id %d -> %s", id, entInfo(e));
                         return Collections.singleton(e);
                     }
                 }
@@ -394,28 +393,30 @@ public final class MotionBrigadier implements BasicCommand {
     // ==== logging ====
 
     private void logInvoker(CommandSourceStack source, String label, String[] args) {
-        String where = switch (source.getSender()) {
-            case Entity e -> {
-                Location l = e.getLocation();
-                yield String.format("%s at %s %s (%.2f, %.2f, %.2f)",
-                        entInfo(e),
-                        (l.getWorld() != null ? l.getWorld().getName() : "null"),
-                        e.getType(),
-                        l.getX(), l.getY(), l.getZ());
-            }
-            case ConsoleCommandSender ignored -> "Console";
-            default -> source.getSender().getClass().getSimpleName();
-        };
-        String joined = String.join(" ", Arrays.asList(args));
-        Bukkit.getLogger().info(LOG_PREFIX + "invoker=" + where + " cmd=/" + label + " args=[" + joined + "]");
-
-        Location l = source.getLocation();
-        Entity exec = source.getExecutor();
-        Bukkit.getLogger().info(LOG_PREFIX + String.format(
-                "execute-context pos=(%.2f,%.2f,%.2f) rot=(pitch=%.2f, yaw=%.2f), world=%s, executor=%s",
-                l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw(),
-                (l.getWorld() != null ? l.getWorld().getName() : "null"),
-                (exec == null ? "null" : exec.getType().name() + "#" + exec.getEntityId())));
+        // String where = switch (source.getSender()) {
+        // case Entity e -> {
+        // Location l = e.getLocation();
+        // yield String.format("%s at %s %s (%.2f, %.2f, %.2f)",
+        // entInfo(e),
+        // (l.getWorld() != null ? l.getWorld().getName() : "null"),
+        // e.getType(),
+        // l.getX(), l.getY(), l.getZ());
+        // }
+        // case ConsoleCommandSender ignored -> "Console";
+        // default -> source.getSender().getClass().getSimpleName();
+        // };
+        // String joined = String.join(" ", Arrays.asList(args));
+        // Bukkit.getLogger().info(LOG_PREFIX + "invoker=" + where + " cmd=/" + label +
+        // " args=[" + joined + "]");
+        //
+        // Location l = source.getLocation();
+        // Entity exec = source.getExecutor();
+        // Bukkit.getLogger().info(LOG_PREFIX + String.format(
+        // "execute-context pos=(%.2f,%.2f,%.2f) rot=(pitch=%.2f, yaw=%.2f), world=%s,
+        // executor=%s",
+        // l.getX(), l.getY(), l.getZ(), l.getPitch(), l.getYaw(),
+        // (l.getWorld() != null ? l.getWorld().getName() : "null"),
+        // (exec == null ? "null" : exec.getType().name() + "#" + exec.getEntityId())));
     }
 
     private void info(CommandSourceStack source, String fmt, Object... args) {
@@ -434,7 +435,7 @@ public final class MotionBrigadier implements BasicCommand {
 
     private void debug(CommandSourceStack source, String fmt, Object... args) {
         String msg = LOG_PREFIX + String.format(fmt, args);
-        Bukkit.getLogger().info(msg);
+        // Bukkit.getLogger().info(msg);
     }
 
     private String entInfo(Entity e) {

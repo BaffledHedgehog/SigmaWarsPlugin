@@ -173,6 +173,10 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
                         "antigravity",
                         new AntigravityCommand(this)));
 
+        this.getLifecycleManager().registerEventHandler(
+                io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS,
+                evt -> evt.registrar().register("pulsar", new PulsarCommand(this)));
+
         getServer().getPluginManager().registerEvents(
                 new RocketArmor(this),
                 this);
@@ -302,7 +306,8 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
                     || label.equals("antigravity") || label.equals("lws:antigravity") || label.equals("clonetonexus")
                     || label.equals("lws:clonetonexus") || label.equals("lws:badapple") || label.equals("badapple")
                     || label.equals("bedwars") || label.equals("lws:bedwars") || label.equals("teaminit")
-                    || label.equals("lws:teaminit") || label.equals("lws:mapclear") || label.equals("mapclear")) {
+                    || label.equals("lws:teaminit") || label.equals("lws:mapclear") || label.equals("mapclear")
+                    || label.equals("lws:pulsar") || label.equals("pulsar")) {
                 if (!e.getPlayer().hasPermission("lws.regen")) {
                     e.setCancelled(true);
                     e.getPlayer().sendMessage("§cУ вас нет прав на эту команду.");

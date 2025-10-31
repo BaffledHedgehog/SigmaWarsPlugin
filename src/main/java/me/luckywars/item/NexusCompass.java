@@ -31,9 +31,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import net.kyori.adventure.text.Component;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -46,26 +47,21 @@ public class NexusCompass implements Listener {
     private final JavaPlugin plugin;
     private final NamespacedKey itemKey;
     private final NamespacedKey typeKey;
-    private Objective cdObj;
+
+    private static final String CD_OBJECTIVE = "nexus_compass_cd";
+    private static final int MAX_CD = 30;
+
     private final Gson gson = new Gson();
     private final Random random = new Random();
     private final ConcurrentHashMap<UUID, Integer> cooldowns = new ConcurrentHashMap<>();
-    private static final int MAX_CD = 30; // seconds
 
-    @SuppressWarnings("deprecation")
     public NexusCompass(JavaPlugin plugin) {
         this.plugin = plugin;
         this.itemKey = new NamespacedKey(plugin, "item");
         this.typeKey = new NamespacedKey(plugin, "type");
 
-        ScoreboardManager mgr = Bukkit.getScoreboardManager();
-        Scoreboard sc = mgr.getMainScoreboard();
-        this.cdObj = sc.getObjective("nexus_compass_cd");
-        if (cdObj == null) {
-            cdObj = sc.registerNewObjective("nexus_compass_cd", "dummy");
-        }
+        ensureObjectiveOn(Bukkit.getScoreboardManager().getMainScoreboard());
 
-        // schedule cooldown decrement every second
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -75,13 +71,52 @@ public class NexusCompass implements Listener {
                         int next = cd - 1;
                         cooldowns.put(id, next);
                         Player p = Bukkit.getPlayer(id);
-                        if (p != null && cdObj != null) {
-                            cdObj.getScore(p.getName()).setScore(next);
+                        if (p != null) {
+                            setCooldownScore(p, next); // <-- см. ниже
                         }
                     }
                 }
             }
         }.runTaskTimer(plugin, 20, 20);
+    }
+
+    private Objective ensureObjectiveOn(Scoreboard sb) {
+        Objective obj = sb.getObjective(CD_OBJECTIVE);
+        if (obj == null) {
+            try {
+                obj = sb.registerNewObjective(CD_OBJECTIVE, Criteria.DUMMY, Component.text(CD_OBJECTIVE));
+            } catch (IllegalArgumentException ignored) {
+                // если кто-то успел создать параллельно
+                obj = sb.getObjective(CD_OBJECTIVE);
+            }
+        }
+        return obj;
+    }
+
+    private void setCooldownScore(Player p, int value) {
+        // 1) всегда обновляем MainScoreboard (его видит /scoreboard ...)
+        var mgr = Bukkit.getScoreboardManager();
+        if (mgr == null)
+            return; // сервер ещё не полностью инициализирован
+        Scoreboard mainSb = mgr.getMainScoreboard();
+        Objective main = ensureObjectiveOn(mainSb);
+        main.getScore(p.getName()).setScore(value);
+
+        // 2) если у игрока свой скорборд (арена), синхронизируем и туда
+        Scoreboard psb = p.getScoreboard();
+        if (psb != null && psb != mainSb) {
+            Objective obj = psb.getObjective(CD_OBJECTIVE);
+            if (obj == null) {
+                try {
+                    obj = psb.registerNewObjective(CD_OBJECTIVE, Criteria.DUMMY, Component.text(CD_OBJECTIVE));
+                } catch (IllegalArgumentException ignored) {
+                    obj = psb.getObjective(CD_OBJECTIVE);
+                }
+            }
+            if (obj != null) {
+                obj.getScore(p.getName()).setScore(value);
+            }
+        }
     }
 
     @EventHandler
@@ -161,8 +196,7 @@ public class NexusCompass implements Listener {
 
         // set cooldown
         cooldowns.put(id, MAX_CD);
-        if (cdObj != null)
-            cdObj.getScore(player.getName()).setScore(MAX_CD);
+        setCooldownScore(player, MAX_CD);
     }
 
     private boolean hasMagicStopperMarkerNearby(Player p, double radius) {
