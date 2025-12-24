@@ -49,9 +49,12 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
     }
 
     private final Map<World, Deque<TrackingItem>> itemQueues = new HashMap<>();
+    private me.luckywars.PhysicalObjectPhysics physics;
 
     @Override
     public void onEnable() {
+        physics = new me.luckywars.PhysicalObjectPhysics(this);
+        physics.start();
 
         getCommand("mapclear").setExecutor(new MapClearCommand(this));
 
@@ -175,6 +178,10 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
 
         this.getLifecycleManager().registerEventHandler(
                 io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS,
+                evt -> evt.registrar().register("midas", new MidasCommand(this)));
+
+        this.getLifecycleManager().registerEventHandler(
+                io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS,
                 evt -> evt.registrar().register("pulsar", new PulsarCommand(this)));
 
         getServer().getPluginManager().registerEvents(
@@ -234,6 +241,9 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
     public void onDisable() {
         itemQueues.clear();
         regenHandler.disable();
+        if (physics != null)
+            physics.stop();
+
     }
 
     @EventHandler(priority = EventPriority.HIGH)

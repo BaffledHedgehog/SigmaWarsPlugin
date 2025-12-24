@@ -7,36 +7,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import com.sk89q.worldedit.EditSession;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
 
 /**
- * /pulsar
- * Стартует 3 независимые волны «поедания» блоков из блока (~ ~ ~) контекста
- * исполнения команды:
- * 1) сразу: всё, что не воздух и не WHITE/BLACK_CONCRETE -> WHITE_CONCRETE.
- * BFS, слой за тик.
- * 2) +2 сек: всё, что не воздух и не BLACK_CONCRETE -> BLACK_CONCRETE. BFS,
- * слой за тик.
- * 3) +4 сек: всё, что не воздух -> AIR. BFS, слой за тик.
+ * /pulsar — запускает цепной эффект поедания блоков 5-ю волнами:
+ * 1) WHITE_CONCRETE
+ * 2) LIME_CONCRETE
+ * 3) RED_CONCRETE
+ * 4) BLACK_CONCRETE
+ * 5) AIR
  *
- * Важное: позиция берётся из CommandSourceStack#getLocation(), что сохраняет
- * контекст /execute из датапака.
- * Paper Brigadier гарантирует нам эту позицию.
+ * Каждая следующая волна начинается через 2 сек (40 тиков) после окончания
+ * предыдущей.
  */
 public final class PulsarCommand implements BasicCommand {
 
@@ -48,71 +36,81 @@ public final class PulsarCommand implements BasicCommand {
 
     @Override
     public void execute(CommandSourceStack source, String[] args) {
-        // Точка запуска — ровно блок ~ ~ ~ из контекста исполнения
-        final Location loc = source.getLocation(); // Paper Brigadier хранит позицию /execute
+        final Location loc = source.getLocation();
         final World world = loc.getWorld();
         if (world == null) {
             source.getSender().sendMessage(Component.text("§cМир неизвестен для источника команды."));
             return;
         }
-
         final BlockVector3 origin = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
-        // ВОЛНА 1: сразу
-        new WaveRunner(plugin,
-                world,
-                origin,
-                // Условие обработки текущего блока:
-                (mat) -> !mat.isAir() && mat != Material.WHITE_CONCRETE && mat != Material.BLACK_CONCRETE,
-                // Состояние, в которое ставим:
+        // Wave #1 (white) — сразу
+        new WaveRunner(plugin, world, origin,
+                (mat) -> !mat.isAir() && mat != Material.WHITE_CONCRETE
+                        && mat != Material.LIME_CONCRETE
+                        && mat != Material.RED_CONCRETE
+                        && mat != Material.BLACK_CONCRETE,
                 BlockTypes.WHITE_CONCRETE.getDefaultState(),
-                // Условие, по которому сосед добавляется в очередь:
-                (mat) -> !mat.isAir() && mat != Material.WHITE_CONCRETE && mat != Material.BLACK_CONCRETE,
-                "Pulsar Wave #1 (white)").runTaskTimer(plugin, 0L, 1L);
+                (mat) -> !mat.isAir() && mat != Material.WHITE_CONCRETE
+                        && mat != Material.LIME_CONCRETE
+                        && mat != Material.RED_CONCRETE
+                        && mat != Material.BLACK_CONCRETE,
+                "Wave #1 (white)").runTaskTimer(plugin, 0L, 1L);
 
-        // ВОЛНА 2: через 2 секунды (40 тиков)
-        new WaveRunner(plugin,
-                world,
-                origin,
+        // Wave #2 (lime) — через 2 сек
+        new WaveRunner(plugin, world, origin,
+                (mat) -> !mat.isAir() && mat != Material.LIME_CONCRETE
+                        && mat != Material.RED_CONCRETE && mat != Material.BLACK_CONCRETE,
+                BlockTypes.LIME_CONCRETE.getDefaultState(),
+                (mat) -> !mat.isAir() && mat != Material.LIME_CONCRETE
+                        && mat != Material.RED_CONCRETE && mat != Material.BLACK_CONCRETE,
+                "Wave #2 (lime)").runTaskTimer(plugin, 40, 1L);
+
+        // Wave #3 (red) — через 4 сек
+        new WaveRunner(plugin, world, origin,
+                (mat) -> !mat.isAir() && mat != Material.RED_CONCRETE && mat != Material.BLACK_CONCRETE,
+                BlockTypes.RED_CONCRETE.getDefaultState(),
+                (mat) -> !mat.isAir() && mat != Material.RED_CONCRETE && mat != Material.BLACK_CONCRETE,
+                "Wave #3 (red)").runTaskTimer(plugin, 60, 1L);
+
+        // Wave #4 (black) — через 6 сек
+        new WaveRunner(plugin, world, origin,
                 (mat) -> !mat.isAir() && mat != Material.BLACK_CONCRETE,
                 BlockTypes.BLACK_CONCRETE.getDefaultState(),
                 (mat) -> !mat.isAir() && mat != Material.BLACK_CONCRETE,
-                "Pulsar Wave #2 (black)").runTaskTimer(plugin, 40L, 1L);
+                "Wave #4 (black)").runTaskTimer(plugin, 70, 1L);
 
-        // ВОЛНА 3: ещё через 2 секунды (итого +4 сек = 80 тиков)
-        new WaveRunner(plugin,
-                world,
-                origin,
+        // Wave #5 (air) — через 8 сек
+        new WaveRunner(plugin, world, origin,
                 (mat) -> !mat.isAir(),
                 BlockTypes.AIR.getDefaultState(),
                 (mat) -> !mat.isAir(),
-                "Pulsar Wave #3 (air)").runTaskTimer(plugin, 80L, 1L);
+                "Wave #5 (air)").runTaskTimer(plugin, 75, 1L);
 
-        source.getSender().sendMessage(Component.text("§aЗапущен пульсар в " +
-                String.format("[%s] (%d,%d,%d)",
-                        world.getName(), origin.x(), origin.y(), origin.z())));
+        //source.getSender().sendMessage(Component.text(String.format(
+        //        "§aЗапущен пульсар (5 волн) из [%s] (%.0f, %.0f, %.0f)",
+        //        world.getName(), loc.getX(), loc.getY(), loc.getZ())));
     }
 
-    // --- реализация волны ---
+    // ---------- реализация волны ----------
 
     @FunctionalInterface
     private interface BlockCondition {
         boolean test(Material mat);
     }
 
-    private static final class WaveRunner extends BukkitRunnable {
+    private static final class WaveRunner extends org.bukkit.scheduler.BukkitRunnable {
         private final Plugin plugin;
         private final World world;
         private final String debugName;
-
         private final BlockCondition shouldTransform;
         private final BlockState toState;
         private final BlockCondition shouldPropagate;
+        private final Runnable onComplete;
 
-        private final Queue<BlockVector3> frontier = new ArrayDeque<>();
-        private final Set<BlockVector3> visited = new HashSet<>();
-
-        private EditSession session;
+        private java.util.LinkedHashSet<BlockVector3> currentLayer = new java.util.LinkedHashSet<>();
+        private java.util.LinkedHashSet<BlockVector3> nextLayer = new java.util.LinkedHashSet<>();
+        private final java.util.HashSet<BlockVector3> visited = new java.util.HashSet<>();
 
         WaveRunner(Plugin plugin,
                 World world,
@@ -121,85 +119,88 @@ public final class PulsarCommand implements BasicCommand {
                 BlockState toState,
                 BlockCondition shouldPropagate,
                 String debugName) {
+            this(plugin, world, origin, shouldTransform, toState, shouldPropagate, debugName, null);
+        }
+
+        WaveRunner(Plugin plugin,
+                World world,
+                BlockVector3 origin,
+                BlockCondition shouldTransform,
+                BlockState toState,
+                BlockCondition shouldPropagate,
+                String debugName,
+                Runnable onComplete) {
             this.plugin = plugin;
             this.world = world;
             this.shouldTransform = shouldTransform;
             this.toState = toState;
             this.shouldPropagate = shouldPropagate;
             this.debugName = debugName;
-
-            frontier.add(origin);
-            visited.add(origin);
+            this.onComplete = onComplete;
+            currentLayer.add(origin);
         }
 
         @Override
         public void run() {
-            if (session == null) {
-                // Один EditSession на всю волну — так быстрее и чище для FAWE/WE очереди.
-                session = WorldEdit.getInstance()
-                        .newEditSessionBuilder()
-                        .world(BukkitAdapter.adapt(world))
-                        .fastMode(true)
-                        .build();
-            }
-
-            if (frontier.isEmpty()) {
-                // Закрываем сессию, когда закончили.
-                try (EditSession toClose = session) {
-                    // try-with-resources закроет и сбросит очередь
-                }
-                this.cancel();
+            if (currentLayer.isEmpty()) {
+                cancel();
+                if (onComplete != null)
+                    Bukkit.getScheduler().runTask(plugin, onComplete);
                 return;
             }
 
-            // Обрабатываем РОВНО один «слой» BFS за тик (все вершины текущей границы).
-            int layerSize = frontier.size();
-            for (int i = 0; i < layerSize; i++) {
-                final BlockVector3 pos = frontier.poll();
-                if (pos == null)
-                    continue;
+            try (com.sk89q.worldedit.EditSession session = com.sk89q.worldedit.WorldEdit.getInstance()
+                    .newEditSessionBuilder()
+                    .world(com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(world))
+                    .fastMode(true)
+                    .build()) {
 
-                final Block b = world.getBlockAt(pos.x(), pos.y(), pos.z());
-                final Material mat = b.getType();
-
-                // Применяем изменение, если подходит под правило волны
-                if (shouldTransform.test(mat)) {
-                    session.setBlock(pos, toState);
+                var layer = new java.util.ArrayList<>(currentLayer);
+                for (BlockVector3 pos : layer) {
+                    applyAt(session, pos);
+                    addNeighborIfEligible(pos.x() + 1, pos.y(), pos.z());
+                    addNeighborIfEligible(pos.x() - 1, pos.y(), pos.z());
+                    addNeighborIfEligible(pos.x(), pos.y() + 1, pos.z());
+                    addNeighborIfEligible(pos.x(), pos.y() - 1, pos.z());
+                    addNeighborIfEligible(pos.x(), pos.y(), pos.z() + 1);
+                    addNeighborIfEligible(pos.x(), pos.y(), pos.z() - 1);
                 }
-
-                // Распространяемся на 6 соседей по «манхэттену», если подходит правилу
-                // распространения
-                addIfEligible(BlockVector3.at(pos.x() + 1, pos.y(), pos.z()));
-                addIfEligible(BlockVector3.at(pos.x() - 1, pos.y(), pos.z()));
-                addIfEligible(BlockVector3.at(pos.x(), pos.y() + 1, pos.z()));
-                addIfEligible(BlockVector3.at(pos.x(), pos.y() - 1, pos.z()));
-                addIfEligible(BlockVector3.at(pos.x(), pos.y(), pos.z() + 1));
-                addIfEligible(BlockVector3.at(pos.x(), pos.y(), pos.z() - 1));
-            }
-            // Ничего более — следующий слой пойдёт на следующий тик
-        }
-
-        private void addIfEligible(BlockVector3 p) {
-            if (visited.contains(p))
-                return;
-            final Material m = world.getBlockAt(p.x(), p.y(), p.z()).getType();
-            if (shouldPropagate.test(m)) {
-                visited.add(p);
-                frontier.add(p);
-            }
-        }
-
-        @Override
-        public synchronized void cancel() throws IllegalStateException {
-            super.cancel();
-            // Гарантированно закрыть EditSession, если он ещё жив
-            if (session != null) {
-                try (EditSession toClose = session) {
-                    // закрытие
+                try {
+                    session.flushQueue();
                 } catch (Exception ignored) {
                 }
-                session = null;
             }
+            currentLayer = nextLayer;
+            nextLayer = new java.util.LinkedHashSet<>();
+        }
+
+        private void applyAt(com.sk89q.worldedit.EditSession session, BlockVector3 pos) {
+            if (pos.y() < world.getMinHeight() || pos.y() >= world.getMaxHeight())
+                return;
+            final org.bukkit.block.Block b = world.getBlockAt(pos.x(), pos.y(), pos.z());
+            final Material cur = b.getType();
+            if (!shouldTransform.test(cur))
+                return;
+
+            boolean ok = session.setBlock(pos, toState);
+            if (!ok) {
+                try {
+                    org.bukkit.block.data.BlockData bd = com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(toState);
+                    b.setBlockData(bd, false);
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+
+        private void addNeighborIfEligible(int x, int y, int z) {
+            if (y < world.getMinHeight() || y >= world.getMaxHeight())
+                return;
+            final BlockVector3 p = BlockVector3.at(x, y, z);
+            final Material m = world.getBlockAt(x, y, z).getType();
+            if (!shouldPropagate.test(m))
+                return;
+            if (visited.add(p))
+                nextLayer.add(p);
         }
     }
 }
