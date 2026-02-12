@@ -38,12 +38,12 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle('1.21.8-R0.1-SNAPSHOT')
+    paperweight.paperDevBundle('1.21.11-R0.1-SNAPSHOT')
     // Paper API
-    compileOnly 'io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT'
     // FastAsyncWorldEdit Bukkit API
-    compileOnly "com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.13.2"
-    compileOnly 'com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.13.2'
+    compileOnly "com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.15.0"
+    compileOnly 'com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.15.0'
 
   compileOnly "space.vectrix.ignite:ignite-api:1.1.0"
   compileOnly "net.fabricmc:sponge-mixin:0.15.2+mixin.0.8.7"

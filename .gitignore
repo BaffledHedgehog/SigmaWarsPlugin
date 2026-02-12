@@ -1,2 +1,29 @@
-.vscode/settings.json
-build
+# Build outputs
+/build/
+/target/
+/bin/
+/out/
+
+# Gradle
+/.gradle/
+
+# IDEs
+/.idea/
+/.vscode/
+/.settings/
+/.project
+/.classpath
+/.factorypath
+*.iml
+*.ipr
+*.iws
+/.apt_generated/
+/.apt_generated_tests/
+
+# Generated/derived
+/META-INF/
+
+# OS / logs
+.DS_Store
+Thumbs.db
+*.log
