@@ -1,6 +1,5 @@
-#
-#Sun Feb 08 14:58:26 MSK 2026
 eclipse.preferences.version=1
+org.eclipse.jdt.core.classpath.outputOverlappingAnotherSource=ignore
 org.eclipse.jdt.core.compiler.annotation.missingNonNullByDefaultAnnotation=ignore
 org.eclipse.jdt.core.compiler.annotation.nonnull=javax.annotation.Nonnull
 org.eclipse.jdt.core.compiler.annotation.nonnullbydefault=javax.annotation.ParametersAreNonnullByDefault
