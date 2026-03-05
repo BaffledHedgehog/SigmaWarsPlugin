@@ -17,20 +17,24 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class MetalPipe implements Listener {
-    private final NamespacedKey itemKey;
-    private final NamespacedKey typeKey;
+    private final NamespacedKey pluginItemKey;
+    private final NamespacedKey pluginTypeKey;
+    private final NamespacedKey lwsItemKey = new NamespacedKey("lws", "item");
+    private final NamespacedKey lwsTypeKey = new NamespacedKey("lws", "type");
     private final Map<UUID, Boolean> trackedItems = new ConcurrentHashMap<>();
     private final Map<UUID, UUID> throwers = new ConcurrentHashMap<>();
 
     public MetalPipe(JavaPlugin plugin) {
-        this.itemKey = new NamespacedKey(plugin, "item");
-        this.typeKey = new NamespacedKey(plugin, "type");
+        this.pluginItemKey = new NamespacedKey(plugin, "item");
+        this.pluginTypeKey = new NamespacedKey(plugin, "type");
 
         new BukkitRunnable() {
             @Override
@@ -68,15 +72,7 @@ public class MetalPipe implements Listener {
     @EventHandler
     public void onPlayerDrop(PlayerDropItemEvent event) {
         Item drop = event.getItemDrop();
-
-        PersistentDataContainer stackPdc = drop.getItemStack().getItemMeta().getPersistentDataContainer();
-        if (!stackPdc.has(itemKey, PersistentDataType.TAG_CONTAINER)) {
-            return;
-        }
-
-        PersistentDataContainer nested = stackPdc.get(itemKey, PersistentDataType.TAG_CONTAINER);
-        String type = nested.get(typeKey, PersistentDataType.STRING);
-        if (!"metal_pipe".equals(type)) {
+        if (!isMetalPipe(drop.getItemStack())) {
             return;
         }
 
@@ -91,15 +87,7 @@ public class MetalPipe implements Listener {
         if (!(event.getEntity() instanceof Item item)) {
             return;
         }
-
-        PersistentDataContainer stackPdc = item.getItemStack().getItemMeta().getPersistentDataContainer();
-        if (!stackPdc.has(itemKey, PersistentDataType.TAG_CONTAINER)) {
-            return;
-        }
-
-        PersistentDataContainer nested = stackPdc.get(itemKey, PersistentDataType.TAG_CONTAINER);
-        String type = nested.get(typeKey, PersistentDataType.STRING);
-        if (!"metal_pipe".equals(type)) {
+        if (!isMetalPipe(item.getItemStack())) {
             return;
         }
 
@@ -107,6 +95,78 @@ public class MetalPipe implements Listener {
         item.setPickupDelay(Integer.MAX_VALUE);
         trackedItems.put(id, false);
         throwers.remove(id);
+    }
+
+    private boolean isMetalPipe(ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null) {
+            PersistentDataContainer root = meta.getPersistentDataContainer();
+            if (isMetalPipeViaPdc(root, pluginItemKey, pluginTypeKey)
+                    || isMetalPipeViaPdc(root, lwsItemKey, lwsTypeKey)) {
+                return true;
+            }
+        }
+
+        return isMetalPipeViaNbtReflection(stack);
+    }
+
+    private boolean isMetalPipeViaPdc(PersistentDataContainer root, NamespacedKey itemKey, NamespacedKey typeKey) {
+        if (root == null || !root.has(itemKey, PersistentDataType.TAG_CONTAINER)) {
+            return false;
+        }
+
+        PersistentDataContainer nested = root.get(itemKey, PersistentDataType.TAG_CONTAINER);
+        if (nested == null) {
+            return false;
+        }
+
+        return "metal_pipe".equals(nested.get(typeKey, PersistentDataType.STRING));
+    }
+
+    private boolean isMetalPipeViaNbtReflection(ItemStack stack) {
+        try {
+            String pkg = Bukkit.getServer().getClass().getPackage().getName();
+            Class<?> craft = Class.forName(pkg + ".inventory.CraftItemStack");
+            Method asNms = craft.getMethod("asNMSCopy", ItemStack.class);
+            Object nms = asNms.invoke(null, stack);
+
+            Method getTag = nms.getClass().getMethod("getTag");
+            Object maybeTag = getTag.invoke(nms);
+            Object tag = maybeTag instanceof java.util.Optional<?> opt ? opt.orElse(null) : maybeTag;
+            if (tag == null) {
+                return false;
+            }
+
+            Method getComp = tag.getClass().getMethod("getCompound", String.class);
+            Object customData = getComp.invoke(tag, "custom_data");
+            Object pbv = getComp.invoke(customData, "PublicBukkitValues");
+            if (pbv == null) {
+                return false;
+            }
+
+            return isMetalPipeFromPbvPair(getComp, pbv, pluginItemKey.toString(), pluginTypeKey.toString())
+                    || isMetalPipeFromPbvPair(getComp, pbv, "lws:item", "lws:type");
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private boolean isMetalPipeFromPbvPair(Method getComp, Object pbv, String itemKey, String typeKey) {
+        try {
+            Object container = getComp.invoke(pbv, itemKey);
+            if (container == null) {
+                return false;
+            }
+            Method getString = container.getClass().getMethod("getString", String.class);
+            String type = (String) getString.invoke(container, typeKey);
+            return "metal_pipe".equals(type);
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     private void handleLanding(Item item) {
