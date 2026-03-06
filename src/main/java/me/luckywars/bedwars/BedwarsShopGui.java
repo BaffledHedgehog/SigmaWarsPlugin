@@ -198,7 +198,7 @@ public final class BedwarsShopGui {
         addItem(39, enchanted(new ItemStack(Material.BOW), Enchantment.POWER, 1),
                 "bow_p2", price().gold(5), 1);
         addItem(40, enchanted(new ItemStack(Material.BOW), Enchantment.POWER, 2),
-                "bow_p3", price().gold(5), 1);
+                "bow_p3", price().gold(10), 1);
         ItemStack bowK = new ItemStack(Material.BOW);
         bowK.addUnsafeEnchantment(Enchantment.POWER, 2);
         bowK.addUnsafeEnchantment(Enchantment.PUNCH, 1);

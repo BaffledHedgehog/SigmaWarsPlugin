@@ -25,9 +25,8 @@ public class MapClearCommand implements CommandExecutor, TabCompleter {
     private static final int CMIN = -32, CMAX = 31; // [-32..31] x [-32..31]
     private static final int XZ_MIN = -512, XZ_MAX = 511; // [-512..511] по блокам
 
-    // безопасные зазоры по секциям (16бл)
-    private static final int SAFE_MARGIN_SECTIONS_DEFAULT = 3; // сверху 3 секции (48 блоков)
-    // снизу зазор 0 секций, если minY >= 0 (чтобы чистить 0..47)
+    // true = максимальная скорость: без медленного NBT-скана region-файлов.
+    private static final boolean AGGRESSIVE_CLEAR = true;
 
     private final JavaPlugin plugin;
 
@@ -107,10 +106,14 @@ public class MapClearCommand implements CommandExecutor, TabCompleter {
             return list;
         });
 
-        // ASYNC: решаем какие из загруженных чанков чистить (palette.size()>1 в любой
-        // секции; проверка снизу-вверх)
-        CompletableFuture<List<int[]>> decideDirty = snapshotLoaded.thenApplyAsync(loadedChunks -> {
+        CompletableFuture<List<int[]>> chunksToClear = snapshotLoaded.thenApplyAsync(loadedChunks -> {
             sender.sendMessage("[mapclear:" + wName + "] Загруженных чанков в области: " + loadedChunks.size());
+            if (AGGRESSIVE_CLEAR) {
+                sender.sendMessage("[mapclear:" + wName + "] Aggressive mode: чистим все загруженные чанки.");
+                return loadedChunks;
+            }
+
+            // Legacy-режим: дорогая проверка palette.size()>1 в region-файлах.
             File regionDir = new File(bukkitWorld.getWorldFolder(), "region");
             List<int[]> dirty = new ArrayList<>();
             for (int[] c : loadedChunks) {
@@ -120,30 +123,18 @@ public class MapClearCommand implements CommandExecutor, TabCompleter {
                         dirty.add(c);
                     }
                 } catch (IOException e) {
-                    // не смогли прочитать — подстрахуемся, считаем «грязным»
                     dirty.add(c);
                 }
             }
             return dirty;
         });
 
-        // параметры «безопасной» высоты
+        // Чистим весь вертикальный диапазон мира: без верхних/нижних "safe margins".
         final World weWorld = BukkitAdapter.adapt(bukkitWorld);
         final int worldMinY = weWorld.getMinY();
-        final int worldMaxYInclusive = weWorld.getMaxY() - 1;
-        final int minSection = Math.floorDiv(worldMinY, 16);
-        final int maxSection = Math.floorDiv(worldMaxYInclusive, 16);
-        final int bottomMarginSections = (worldMinY >= 0) ? 0 : SAFE_MARGIN_SECTIONS_DEFAULT;
-        final int topMarginSections = SAFE_MARGIN_SECTIONS_DEFAULT;
-
-        int tmpStartY = ((minSection + bottomMarginSections) << 4);
-        int tmpEndY = ((maxSection - topMarginSections) << 4) + 15;
-        if (tmpStartY > tmpEndY) {
-            tmpStartY = (minSection << 4);
-            tmpEndY = ((maxSection) << 4) + 15;
-        }
-        final int fillStartY = tmpStartY;
-        final int fillEndY = tmpEndY;
+        final int worldMaxYInclusive = weWorld.getMaxY();
+        final int fillStartY = worldMinY;
+        final int fillEndY = worldMaxYInclusive;
 
         sender.sendMessage(String.format(
                 "[mapclear:%s] minY=%d, maxY=%d, safeFillY=[%d..%d]",
@@ -151,8 +142,8 @@ public class MapClearCommand implements CommandExecutor, TabCompleter {
 
         // ASYNC: FAWE — «сырое» заполнение воздухом по выбранным чанкам (без
         // forceload/unload)
-        CompletableFuture<Integer> faweClear = decideDirty.thenApplyAsync(dirtyChunks -> {
-            if (dirtyChunks.isEmpty())
+        CompletableFuture<Integer> faweClear = chunksToClear.thenApplyAsync(chunks -> {
+            if (chunks.isEmpty())
                 return 0;
             int changedTotal = 0;
             try (EditSession es = WorldEdit.getInstance()
@@ -167,23 +158,20 @@ public class MapClearCommand implements CommandExecutor, TabCompleter {
                 } catch (Throwable ignored) {
                 }
 
-                for (int[] c : dirtyChunks) {
+                for (int[] c : chunks) {
                     int cx = c[0], cz = c[1];
                     int bx0 = cx << 4, bz0 = cz << 4;
                     int bx1 = bx0 + 15, bz1 = bz0 + 15;
 
-                    for (int y = fillStartY; y <= fillEndY; y += 16) {
-                        int yTop = Math.min(y + 15, fillEndY);
-                        CuboidRegion slice = new CuboidRegion(
-                                weWorld,
-                                BlockVector3.at(bx0, y, bz0),
-                                BlockVector3.at(bx1, yTop, bz1));
+                    CuboidRegion chunkColumn = new CuboidRegion(
+                            weWorld,
+                            BlockVector3.at(bx0, fillStartY, bz0),
+                            BlockVector3.at(bx1, fillEndY, bz1));
 
-                        changedTotal += setBlocksRaw(
-                                es,
-                                slice,
-                                com.sk89q.worldedit.world.block.BlockTypes.AIR.getDefaultState());
-                    }
+                    changedTotal += setBlocksRaw(
+                            es,
+                            chunkColumn,
+                            com.sk89q.worldedit.world.block.BlockTypes.AIR.getDefaultState());
                 }
 
                 es.flushQueue();
