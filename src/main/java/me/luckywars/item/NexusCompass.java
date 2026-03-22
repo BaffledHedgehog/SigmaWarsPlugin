@@ -3,7 +3,6 @@ package me.luckywars.item;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,6 +46,10 @@ public class NexusCompass implements Listener {
     private final JavaPlugin plugin;
     private final NamespacedKey itemKey;
     private final NamespacedKey typeKey;
+    private final NamespacedKey lwsItemKey = new NamespacedKey("lws", "item");
+    private final NamespacedKey lwsTypeKey = new NamespacedKey("lws", "type");
+    private final NamespacedKey legacyItemKey = new NamespacedKey("lucky_wars", "item");
+    private final NamespacedKey legacyTypeKey = new NamespacedKey("lucky_wars", "type");
 
     private static final String CD_OBJECTIVE = "nexus_compass_cd";
     private static final int MAX_CD = 30;
@@ -210,68 +213,35 @@ public class NexusCompass implements Listener {
     }
 
     /**
-     * Checks PDC and, if absent, NBT for nexus_compass type.
+     * Checks item tag via PDC.
      */
     private boolean hasCompassNBT(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
-        if (meta != null) {
-            PersistentDataContainer root = meta.getPersistentDataContainer();
-            // plugin.getLogger().info("[NexusCompass] PDC root keys: " + root.getKeys());
-            if (root.has(itemKey, PersistentDataType.TAG_CONTAINER)) {
-                PersistentDataContainer lws = root.get(itemKey, PersistentDataType.TAG_CONTAINER);
-                // plugin.getLogger().info("[NexusCompass] lws-item keys: " + (lws != null ?
-                // lws.getKeys() : "null"));
-                if (lws != null && lws.has(typeKey, PersistentDataType.STRING)) {
-                    String type = lws.get(typeKey, PersistentDataType.STRING);
-                    // plugin.getLogger().info("[NexusCompass] Found PDC type: " + type);
-                    if ("nexus_compass".equals(type))
-                        return true;
-                }
-            }
-        }
-        // reflection fallback
-        // plugin.getLogger().info("[NexusCompass] Falling back to NBT reflection");
-        try {
-            String pkg = Bukkit.getServer().getClass().getPackage().getName();
-            Class<?> craft = Class.forName(pkg + ".inventory.CraftItemStack");
-            Method asNMS = craft.getMethod("asNMSCopy", ItemStack.class);
-            Object nms = asNMS.invoke(null, stack);
-            Method getTag = nms.getClass().getMethod("getTag");
-            Object maybeTag = getTag.invoke(nms);
-            Object tag = maybeTag instanceof java.util.Optional<?> opt ? opt.orElse(null) : maybeTag;
-            if (tag == null) {
-                // plugin.getLogger().info("[NexusCompass] NBT tag is null");
-                return false;
-            }
-            Method getComp = tag.getClass().getMethod("getCompound", String.class);
-            Object cd = getComp.invoke(tag, "custom_data");
-            Object pbv = getComp.invoke(cd, "PublicBukkitValues");
-            Object lwsTag = getComp.invoke(pbv, "lws:item");
-            // plugin.getLogger().info("[NexusCompass] NBT has lws:item tag");
-
-            Method getString = lwsTag.getClass().getMethod("getString", String.class);
-            String type = (String) getString.invoke(lwsTag, "lws:type");
-            // plugin.getLogger().info("[NexusCompass] Reflection NBT type: " + type);
-            return "nexus_compass".equals(type);
-        } catch (Exception ex) {
-            // plugin.getLogger().warning("[NexusCompass] NBT reflection failed: " + ex);
+        if (meta == null) {
             return false;
         }
+        PersistentDataContainer root = meta.getPersistentDataContainer();
+        return hasType(root, itemKey, typeKey)
+                || hasType(root, lwsItemKey, lwsTypeKey)
+                || hasType(root, legacyItemKey, legacyTypeKey);
+    }
+
+    private boolean hasType(PersistentDataContainer root, NamespacedKey itemTagKey, NamespacedKey typeTagKey) {
+        if (!root.has(itemTagKey, PersistentDataType.TAG_CONTAINER)) {
+            return false;
+        }
+        PersistentDataContainer nested = root.get(itemTagKey, PersistentDataType.TAG_CONTAINER);
+        if (nested == null) {
+            return false;
+        }
+        return "nexus_compass".equals(nested.get(typeTagKey, PersistentDataType.STRING));
     }
 
     public boolean isExcludedDimension(World world) {
-        try {
-            Method getHandle = world.getClass().getMethod("getHandle");
-            Object nmsWorld = getHandle.invoke(world);
-            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
-            Object resourceKey = dimMethod.invoke(nmsWorld);
-            Method locMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLoc = locMethod.invoke(resourceKey);
-            Method toString = resourceLoc.getClass().getMethod("toString");
-            String dim = (String) toString.invoke(resourceLoc);
-            return "minecraft:imprinted".equals(dim);
-        } catch (Exception e) {
+        if (world == null) {
             return false;
         }
+        String dim = world.getKey().toString();
+        return "minecraft:imprinted".equals(dim);
     }
 }

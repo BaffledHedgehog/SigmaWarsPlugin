@@ -1,7 +1,6 @@
 // src/main/java/com/lws/item/Malevich.java
 package me.luckywars.item;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,8 +45,12 @@ import org.bukkit.util.Vector;
 public class Malevich implements Listener {
     private final JavaPlugin plugin;
 
-    private final NamespacedKey itemKey;
-    private final NamespacedKey typeKey;
+    private final NamespacedKey pluginItemKey;
+    private final NamespacedKey pluginTypeKey;
+    private final NamespacedKey lwsItemKey = new NamespacedKey("lws", "item");
+    private final NamespacedKey lwsTypeKey = new NamespacedKey("lws", "type");
+    private final NamespacedKey legacyItemKey = new NamespacedKey("lucky_wars", "item");
+    private final NamespacedKey legacyTypeKey = new NamespacedKey("lucky_wars", "type");
     private final NamespacedKey lootTableKey = new NamespacedKey("lbc", "malevich_rnd");
     private final Random random = new Random();
 
@@ -56,8 +59,8 @@ public class Malevich implements Listener {
 
     public Malevich(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.itemKey = new NamespacedKey(plugin, "item");
-        this.typeKey = new NamespacedKey(plugin, "type");
+        this.pluginItemKey = new NamespacedKey(plugin, "item");
+        this.pluginTypeKey = new NamespacedKey(plugin, "type");
 
         // 1) Каждые 5 тиков: если у игрока есть "квадрат" и он не в cooldown, заполняем
         // пустые слоты
@@ -267,12 +270,16 @@ public class Malevich implements Listener {
         if (meta == null)
             return false;
         PersistentDataContainer p = meta.getPersistentDataContainer();
-        if (!p.has(itemKey, PersistentDataType.TAG_CONTAINER))
+        return hasType(p, pluginItemKey, pluginTypeKey)
+                || hasType(p, lwsItemKey, lwsTypeKey)
+                || hasType(p, legacyItemKey, legacyTypeKey);
+    }
+    private boolean hasType(PersistentDataContainer root, NamespacedKey itemKey, NamespacedKey typeKey) {
+        if (!root.has(itemKey, PersistentDataType.TAG_CONTAINER))
             return false;
-        PersistentDataContainer inner = p.get(itemKey, PersistentDataType.TAG_CONTAINER);
+        PersistentDataContainer inner = root.get(itemKey, PersistentDataType.TAG_CONTAINER);
         return inner != null && "malevich".equals(inner.get(typeKey, PersistentDataType.STRING));
     }
-
     private boolean isEmpty(ItemStack s) {
         return s == null || s.getType().isAir() || s.getAmount() <= 0;
     }
@@ -319,19 +326,11 @@ public class Malevich implements Listener {
      * true, если dimension key == "minecraft:nexus" или "minecraft:imprinted"
      */
     public boolean isExcludedDimension(World world) {
-        try {
-            Method getHandle = world.getClass().getMethod("getHandle");
-            Object nmsWorld = getHandle.invoke(world);
-            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
-            Object resourceKey = dimMethod.invoke(nmsWorld);
-            Method locMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLoc = locMethod.invoke(resourceKey);
-            Method toString = resourceLoc.getClass().getMethod("toString");
-            String dim = (String) toString.invoke(resourceLoc);
-            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
-        } catch (Exception e) {
+        if (world == null) {
             return false;
         }
+        String dim = world.getKey().toString();
+        return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
     }
 
     private boolean hasMagicStopperMarkerNearby(Player p, double radius) {
@@ -372,3 +371,4 @@ public class Malevich implements Listener {
     }
 
 }
+

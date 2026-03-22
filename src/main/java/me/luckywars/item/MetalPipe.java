@@ -1,6 +1,5 @@
 package me.luckywars.item;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +28,8 @@ public class MetalPipe implements Listener {
     private final NamespacedKey pluginTypeKey;
     private final NamespacedKey lwsItemKey = new NamespacedKey("lws", "item");
     private final NamespacedKey lwsTypeKey = new NamespacedKey("lws", "type");
+    private final NamespacedKey legacyItemKey = new NamespacedKey("lucky_wars", "item");
+    private final NamespacedKey legacyTypeKey = new NamespacedKey("lucky_wars", "type");
     private final Map<UUID, Boolean> trackedItems = new ConcurrentHashMap<>();
     private final Map<UUID, UUID> throwers = new ConcurrentHashMap<>();
 
@@ -106,12 +107,13 @@ public class MetalPipe implements Listener {
         if (meta != null) {
             PersistentDataContainer root = meta.getPersistentDataContainer();
             if (isMetalPipeViaPdc(root, pluginItemKey, pluginTypeKey)
-                    || isMetalPipeViaPdc(root, lwsItemKey, lwsTypeKey)) {
+                    || isMetalPipeViaPdc(root, lwsItemKey, lwsTypeKey)
+                    || isMetalPipeViaPdc(root, legacyItemKey, legacyTypeKey)) {
                 return true;
             }
         }
 
-        return isMetalPipeViaNbtReflection(stack);
+        return false;
     }
 
     private boolean isMetalPipeViaPdc(PersistentDataContainer root, NamespacedKey itemKey, NamespacedKey typeKey) {
@@ -125,48 +127,6 @@ public class MetalPipe implements Listener {
         }
 
         return "metal_pipe".equals(nested.get(typeKey, PersistentDataType.STRING));
-    }
-
-    private boolean isMetalPipeViaNbtReflection(ItemStack stack) {
-        try {
-            String pkg = Bukkit.getServer().getClass().getPackage().getName();
-            Class<?> craft = Class.forName(pkg + ".inventory.CraftItemStack");
-            Method asNms = craft.getMethod("asNMSCopy", ItemStack.class);
-            Object nms = asNms.invoke(null, stack);
-
-            Method getTag = nms.getClass().getMethod("getTag");
-            Object maybeTag = getTag.invoke(nms);
-            Object tag = maybeTag instanceof java.util.Optional<?> opt ? opt.orElse(null) : maybeTag;
-            if (tag == null) {
-                return false;
-            }
-
-            Method getComp = tag.getClass().getMethod("getCompound", String.class);
-            Object customData = getComp.invoke(tag, "custom_data");
-            Object pbv = getComp.invoke(customData, "PublicBukkitValues");
-            if (pbv == null) {
-                return false;
-            }
-
-            return isMetalPipeFromPbvPair(getComp, pbv, pluginItemKey.toString(), pluginTypeKey.toString())
-                    || isMetalPipeFromPbvPair(getComp, pbv, "lws:item", "lws:type");
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    private boolean isMetalPipeFromPbvPair(Method getComp, Object pbv, String itemKey, String typeKey) {
-        try {
-            Object container = getComp.invoke(pbv, itemKey);
-            if (container == null) {
-                return false;
-            }
-            Method getString = container.getClass().getMethod("getString", String.class);
-            String type = (String) getString.invoke(container, typeKey);
-            return "metal_pipe".equals(type);
-        } catch (Exception ignored) {
-            return false;
-        }
     }
 
     private void handleLanding(Item item) {
@@ -193,18 +153,10 @@ public class MetalPipe implements Listener {
     }
 
     public boolean isExcludedDimension(World world) {
-        try {
-            Method getHandle = world.getClass().getMethod("getHandle");
-            Object nmsWorld = getHandle.invoke(world);
-            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
-            Object resourceKey = dimMethod.invoke(nmsWorld);
-            Method locMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLoc = locMethod.invoke(resourceKey);
-            Method toStringMethod = resourceLoc.getClass().getMethod("toString");
-            String dim = (String) toStringMethod.invoke(resourceLoc);
-            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
-        } catch (Exception e) {
+        if (world == null) {
             return false;
         }
+        String dim = world.getKey().toString();
+        return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
     }
 }

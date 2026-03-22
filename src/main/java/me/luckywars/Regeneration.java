@@ -1,6 +1,5 @@
 package me.luckywars;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +40,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,13 +62,24 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
 
     // Ключ для вложенного контейнера "regen"
     private final NamespacedKey keyRegen;
+    private final NamespacedKey keyRegenLws;
+    private final NamespacedKey keyRegenLegacy;
 
-    // Вложенные ключи внутри regen:{ ... } (namespace = your plugin, e.g. lws)
-    private final NamespacedKey keyValue; // regen.value → DOUBLE ("lws:value")
-    private final NamespacedKey keyOperation; // regen.operation → STRING ("lws:operation")
-    private final NamespacedKey keySlot; // regen.slot → STRING ("lws:slot")
-    private final NamespacedKey keyStackable; // regen.stackable → BYTE ("lws:stackable")
-    private final NamespacedKey keyId; // regen.id → STRING ("lws:id")
+    private final NamespacedKey keyValue; // regen.value > DOUBLE ("lws:value")
+    private final NamespacedKey keyOperation; // regen.operation > STRING ("lws:operation")
+    private final NamespacedKey keySlot; // regen.slot > STRING ("lws:slot")
+    private final NamespacedKey keyStackable; // regen.stackable > BYTE ("lws:stackable")
+    private final NamespacedKey keyId; // regen.id > STRING ("lws:id")
+    private final NamespacedKey keyValueLws;
+    private final NamespacedKey keyOperationLws;
+    private final NamespacedKey keySlotLws;
+    private final NamespacedKey keyStackableLws;
+    private final NamespacedKey keyIdLws;
+    private final NamespacedKey keyValueLegacy;
+    private final NamespacedKey keyOperationLegacy;
+    private final NamespacedKey keySlotLegacy;
+    private final NamespacedKey keyStackableLegacy;
+    private final NamespacedKey keyIdLegacy;
 
     // Plain-ключи без namespace, если Paper кладёт поля просто как "value","slot" и
     // т.п.
@@ -92,11 +103,23 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
 
         // Инициализируем ключи с namespace вашего плагина
         keyRegen = new NamespacedKey(plugin, "regen");
+        keyRegenLws = new NamespacedKey("lws", "regen");
+        keyRegenLegacy = new NamespacedKey("lucky_wars", "regen");
         keyValue = new NamespacedKey(plugin, "value");
         keyOperation = new NamespacedKey(plugin, "operation");
         keySlot = new NamespacedKey(plugin, "slot");
         keyStackable = new NamespacedKey(plugin, "stackable");
         keyId = new NamespacedKey(plugin, "id");
+        keyValueLws = new NamespacedKey("lws", "value");
+        keyOperationLws = new NamespacedKey("lws", "operation");
+        keySlotLws = new NamespacedKey("lws", "slot");
+        keyStackableLws = new NamespacedKey("lws", "stackable");
+        keyIdLws = new NamespacedKey("lws", "id");
+        keyValueLegacy = new NamespacedKey("lucky_wars", "value");
+        keyOperationLegacy = new NamespacedKey("lucky_wars", "operation");
+        keySlotLegacy = new NamespacedKey("lucky_wars", "slot");
+        keyStackableLegacy = new NamespacedKey("lucky_wars", "stackable");
+        keyIdLegacy = new NamespacedKey("lucky_wars", "id");
 
         // Инициализируем «plain» ключи без namespace
         plainSlot = new NamespacedKey(NamespacedKey.MINECRAFT, "slot");
@@ -279,7 +302,11 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
         if (stack == null || stack.getType().isAir())
             return;
 
-        PersistentDataContainer tag = stack.getItemMeta().getPersistentDataContainer();
+        ItemMeta itemMeta = stack.getItemMeta();
+        if (itemMeta == null)
+            return;
+
+        PersistentDataContainer tag = itemMeta.getPersistentDataContainer();
         // plugin.getLogger().info("--- gatherItem called for slotKey=" + slotKey + ";
         // item=" + stack.getType());
         // for (NamespacedKey k : tag.getKeys()) {
@@ -287,63 +314,31 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
         // k.getKey());
         // }
         // 1) Проверяем: есть ли вложенный контейнер “lws:regen”
-        if (!tag.has(keyRegen, PersistentDataType.TAG_CONTAINER))
-            return;
-
-        PersistentDataContainer regenTag = tag.get(keyRegen, PersistentDataType.TAG_CONTAINER);
+        PersistentDataContainer regenTag = firstContainer(tag, keyRegen, keyRegenLws, keyRegenLegacy);
         if (regenTag == null)
             return;
 
         // 2) Читаем value (DOUBLE)
-        double value;
-        if (regenTag.has(keyValue, PersistentDataType.DOUBLE)) {
-            // нашли “lws:value”
-            value = regenTag.get(keyValue, PersistentDataType.DOUBLE);
-        } else if (regenTag.has(plainValue, PersistentDataType.DOUBLE)) {
-            // нашли plain “value”
-            value = regenTag.get(plainValue, PersistentDataType.DOUBLE);
-        } else {
+        Double valueRaw = firstDouble(regenTag, keyValue, keyValueLws, keyValueLegacy, plainValue);
+        if (valueRaw == null)
             return;
-        }
+        double value = valueRaw;
 
-        // 3) Читаем operation (STRING)
-        String op;
-        if (regenTag.has(keyOperation, PersistentDataType.STRING)) {
-            op = regenTag.get(keyOperation, PersistentDataType.STRING).toLowerCase(Locale.ROOT);
-        } else if (regenTag.has(plainOperation, PersistentDataType.STRING)) {
-            op = regenTag.get(plainOperation, PersistentDataType.STRING).toLowerCase(Locale.ROOT);
-        } else {
+        String op = firstString(regenTag, keyOperation, keyOperationLws, keyOperationLegacy, plainOperation);
+        if (op == null)
             return;
-        }
+        op = op.toLowerCase(Locale.ROOT);
 
-        // 4) Читаем slot (STRING)
-        String regenSlot;
-        if (regenTag.has(keySlot, PersistentDataType.STRING)) {
-            regenSlot = regenTag.get(keySlot, PersistentDataType.STRING).toLowerCase(Locale.ROOT);
-        } else if (regenTag.has(plainSlot, PersistentDataType.STRING)) {
-            regenSlot = regenTag.get(plainSlot, PersistentDataType.STRING).toLowerCase(Locale.ROOT);
-        } else {
+        String regenSlot = firstString(regenTag, keySlot, keySlotLws, keySlotLegacy, plainSlot);
+        if (regenSlot == null)
             return;
-        }
+        regenSlot = regenSlot.toLowerCase(Locale.ROOT);
 
-        // 5) Читаем stackable (BYTE)
-        boolean stackable = false;
-        if (regenTag.has(keyStackable, PersistentDataType.BYTE)) {
-            stackable = regenTag.get(keyStackable, PersistentDataType.BYTE) != 0;
-        } else if (regenTag.has(plainStackable, PersistentDataType.BYTE)) {
-            stackable = regenTag.get(plainStackable, PersistentDataType.BYTE) != 0;
-        }
+        Byte stackableRaw = firstByte(regenTag, keyStackable, keyStackableLws, keyStackableLegacy, plainStackable);
+        boolean stackable = stackableRaw != null && stackableRaw != 0;
 
-        // 6) Читаем id (STRING)
-        String regenId;
-        if (regenTag.has(keyId, PersistentDataType.STRING)) {
-            regenId = regenTag.get(keyId, PersistentDataType.STRING);
-        } else if (regenTag.has(plainId, PersistentDataType.STRING)) {
-            regenId = regenTag.get(plainId, PersistentDataType.STRING);
-        } else {
-            return;
-        }
-        if (regenId.isEmpty())
+        String regenId = firstString(regenTag, keyId, keyIdLws, keyIdLegacy, plainId);
+        if (regenId == null || regenId.isEmpty())
             return;
 
         // Проверяем, «активен» ли предмет в данном слоте пользователя
@@ -384,7 +379,43 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
             // если stackable == false => не меняем gd.count дальше (игнорируем дубликаты)
         }
     }
+    private PersistentDataContainer firstContainer(PersistentDataContainer root, NamespacedKey... keys) {
+        for (NamespacedKey key : keys) {
+            if (!root.has(key, PersistentDataType.TAG_CONTAINER))
+                continue;
+            PersistentDataContainer nested = root.get(key, PersistentDataType.TAG_CONTAINER);
+            if (nested != null)
+                return nested;
+        }
+        return null;
+    }
 
+    private Double firstDouble(PersistentDataContainer root, NamespacedKey... keys) {
+        for (NamespacedKey key : keys) {
+            if (root.has(key, PersistentDataType.DOUBLE)) {
+                return root.get(key, PersistentDataType.DOUBLE);
+            }
+        }
+        return null;
+    }
+
+    private String firstString(PersistentDataContainer root, NamespacedKey... keys) {
+        for (NamespacedKey key : keys) {
+            if (root.has(key, PersistentDataType.STRING)) {
+                return root.get(key, PersistentDataType.STRING);
+            }
+        }
+        return null;
+    }
+
+    private Byte firstByte(PersistentDataContainer root, NamespacedKey... keys) {
+        for (NamespacedKey key : keys) {
+            if (root.has(key, PersistentDataType.BYTE)) {
+                return root.get(key, PersistentDataType.BYTE);
+            }
+        }
+        return null;
+    }
     private void recalcEntityRegen(LivingEntity ent) {
         UUID uuid = ent.getUniqueId();
         double base = 0.0;
@@ -642,18 +673,11 @@ public class Regeneration implements Listener, CommandExecutor, TabCompleter {
     }
 
     public boolean isExcludedDimension(World world) {
-        try {
-            Method getHandle = world.getClass().getMethod("getHandle");
-            Object nmsWorld = getHandle.invoke(world);
-            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
-            Object resourceKey = dimMethod.invoke(nmsWorld);
-            Method locMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLoc = locMethod.invoke(resourceKey);
-            Method toString = resourceLoc.getClass().getMethod("toString");
-            String dim = (String) toString.invoke(resourceLoc);
-            return "minecraft:imprinted".equals(dim);
-        } catch (Exception e) {
+        if (world == null) {
             return false;
         }
+        String dim = world.getKey().toString();
+        return "minecraft:imprinted".equals(dim);
     }
 }
+
