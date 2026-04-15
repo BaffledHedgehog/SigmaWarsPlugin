@@ -1,10 +1,10 @@
-name: lws
+name: LuckyWars
 main: me.luckywars.SigmaWarsMain
 load: POSTWORLD
 version: 1.5
 api-version: 1.21
 description: Lucky Wars Baffled Eblan Chorn Pild ZV Goida plugin 52 666 sigma
-authors: [GovnoSlav]
+authors: [BaffledHedgehog]
 softdepend: []
 bootstrapper: me.luckywars.bedwars.mixin.BedwarsMixinBootstrap
 depend: [FastAsyncWorldEdit]

@@ -1,3 +1,6 @@
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
+>>>>>>>=f104fc3b10c4c56e4e66dbf810c3a10af2ee9d7b
 arguments=--init-script C\:\\Users\\daeris\\AppData\\Roaming\\Code\\User\\globalStorage\\redhat.java\\1.50.0\\config_win\\org.eclipse.osgi\\58\\0\\.cp\\gradle\\init\\init.gradle --init-script C\:\\Users\\daeris\\AppData\\Roaming\\Code\\User\\globalStorage\\redhat.java\\1.50.0\\config_win\\org.eclipse.osgi\\58\\0\\.cp\\gradle\\protobuf\\init.gradle
 auto.sync=false
 build.scans.enabled=false

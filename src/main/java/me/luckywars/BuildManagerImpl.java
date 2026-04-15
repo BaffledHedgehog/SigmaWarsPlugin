@@ -27,7 +27,7 @@ import com.mojang.brigadier.StringReader;
 import net.minecraft.commands.arguments.NbtPathArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 
 // !!! Проверь версию пакета CraftBukkit ниже (v1_21_R1 может отличаться на твоём билдe)
@@ -731,7 +731,7 @@ public final class BuildManagerImpl implements Listener, CommandExecutor {
 
             // 2) id стораджа
             final String id = snbt.storage().asString(); // "swrg:lang"
-            final ResourceLocation rl = ResourceLocation.parse(id);
+            final Identifier rl = Identifier.parse(id);
 
             // 3) корневой Compound из стораджа
             final CompoundTag root = cmdStorage.get(rl);

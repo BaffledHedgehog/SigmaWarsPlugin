@@ -1,33 +1,50 @@
 package me.luckywars;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.BoundingBox;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.world.block.BaseBlock;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.entity.TeleportFlag.EntityState;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.kyori.adventure.text.Component;
 
-public class RotateMapService {
+public final class RotateMapService {
+
+    private static final int SIZE_X = 320;
+    private static final int SIZE_Y = 320;
+    private static final int SIZE_Z = 320;
+    private static final int Y_MIN = 0;
+    private static final int Y_MAX = Y_MIN + SIZE_Y - 1;
+    private static final AtomicBoolean ROTATION_IN_PROGRESS = new AtomicBoolean(false);
+
+    private RotateMapService() {
+    }
 
     public static void register(LifecycleEventManager<Plugin> mgr, JavaPlugin owner) {
         mgr.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
@@ -35,150 +52,188 @@ public class RotateMapService {
                     .literal("rotatemap")
                     .requires(src -> src.getSender().hasPermission("rotatemap.use"))
                     .executes(ctx -> {
-                        rotateAroundX(ctx.getSource());
+                        rotateAroundXAsync(owner, ctx.getSource());
                         return Command.SINGLE_SUCCESS;
                     })
                     .build();
 
-            // регистрация команды
             event.registrar().register(
                     node,
-                    "Повернуть куб 320×320×320 вокруг X",
+                    "Повернуть куб 320x320x320 вокруг X",
                     List.of());
         });
-
     }
-    // …
 
-    private static void rotateAroundX(CommandSourceStack src) {
-        // 0) Точка запуска и мир
+    private static void rotateAroundXAsync(JavaPlugin owner, CommandSourceStack src) {
         Location origin = src.getLocation();
         World world = origin.getWorld();
-        if (world == null) {
-            // src.getSender().sendPlainMessage("§cНе удалось определить мир.");
+        if (world == null || isExcludedDimension(world)) {
             return;
         }
 
-        // 1) Параметры куба 320×320×320
-        final int sizeX = 320, sizeZ = 320;
-        final int yMin = 0, yMax = 319;
-        final int halfX = sizeX / 2, halfZ = sizeZ / 2;
-        final int xStart = origin.getBlockX() - halfX;
-        final int zStart = origin.getBlockZ() - halfZ;
-        final int cy = (yMin + yMax) / 2;
-        final int cz = zStart + halfZ;
+        if (!ROTATION_IN_PROGRESS.compareAndSet(false, true)) {
+            src.getSender().sendMessage(Component.text("Map rotation is already in progress."));
+            return;
+        }
 
-        // буфер всех BlockData
-        BlockData[][][] dataBuf = new BlockData[sizeX][yMax - yMin + 1][sizeZ];
-        // карта для содержимого контейнеров: ключ (dx,dy,dz) → ItemStack[]
-        Map<Triple, ItemStack[]> invMap = new HashMap<>();
+        broadcastRotateWarn();
 
-        // 2) Считываем BlockData и, если это контейнер, его содержимое
-        for (int dx = 0; dx < sizeX; dx++) {
-            for (int dy = 0; dy <= yMax - yMin; dy++) {
-                for (int dz = 0; dz < sizeZ; dz++) {
-                    int bx = xStart + dx;
-                    int by = yMin + dy;
-                    int bz = zStart + dz;
+        final int xStart = origin.getBlockX() - (SIZE_X / 2);
+        final int zStart = origin.getBlockZ() - (SIZE_Z / 2);
 
-                    Block block = world.getBlockAt(bx, by, bz);
-                    dataBuf[dx][dy][dz] = block.getBlockData();
+        Bukkit.getScheduler().runTaskAsynchronously(owner, () -> {
+            Throwable error = null;
+            RotateResult rotateResult = RotateResult.EMPTY;
+            try {
+                rotateResult = rotateRegionWithFawe(world, xStart, zStart);
+            } catch (Throwable t) {
+                error = t;
+                owner.getLogger().log(Level.SEVERE, "Failed to rotate map region.", t);
+            }
 
-                    BlockState state = block.getState();
-                    if (state instanceof Container container) {
-                        // snapshot‐инвентарь, чтобы не трогать живые объекты мира
-                        ItemStack[] items = container.getSnapshotInventory().getContents().clone();
-                        if (items.length > 0) {
-                            invMap.put(new Triple(dx, dy, dz), items);
+            Throwable finalError = error;
+            RotateResult finalRotateResult = rotateResult;
+            try {
+                Bukkit.getScheduler().runTask(owner, () -> {
+                    try {
+                        if (finalError == null && finalRotateResult.pastedBlocks > 0) {
+                            rotateEntities(world, src, xStart, zStart);
+                        } else if (finalError == null) {
+                            src.getSender().sendMessage(Component.text(
+                                    "Map rotation changed 0 blocks. copied=" + finalRotateResult.copiedBlocks
+                                            + ", pasted=" + finalRotateResult.pastedBlocks
+                                            + ", tried=" + finalRotateResult.triedPastes));
+                        } else {
+                            src.getSender().sendMessage(Component.text("Map rotation failed. Check console."));
+                        }
+                    } finally {
+                        ROTATION_IN_PROGRESS.set(false);
+                    }
+                });
+            } catch (Throwable scheduleError) {
+                ROTATION_IN_PROGRESS.set(false);
+                owner.getLogger().log(Level.SEVERE, "Failed to schedule post-rotation step.", scheduleError);
+            }
+        });
+    }
+
+    private static RotateResult rotateRegionWithFawe(World world, int xStart, int zStart) throws Exception {
+        com.sk89q.worldedit.world.World weWorld = BukkitAdapter.adapt(world);
+        BlockVector3 min = BlockVector3.at(xStart, Y_MIN, zStart);
+        BlockVector3 max = BlockVector3.at(xStart + SIZE_X - 1, Y_MAX, zStart + SIZE_Z - 1);
+
+        CuboidRegion region = new CuboidRegion(weWorld, min, max);
+        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
+        clipboard.setOrigin(min);
+
+        int copied;
+        int pastedOk;
+        int pastedTried;
+        try (EditSession copySession = WorldEdit.getInstance()
+                .newEditSessionBuilder()
+                .world(weWorld)
+                .maxBlocks(-1)
+                .limitUnlimited()
+                .allowedRegionsEverywhere()
+                .checkMemory(false)
+                .changeSetNull()
+                .build()) {
+            copySession.setReorderMode(EditSession.ReorderMode.NONE);
+            copySession.setFastMode(true);
+
+            ForwardExtentCopy copy = new ForwardExtentCopy(weWorld, region, min, clipboard, min);
+            copy.setCopyingEntities(false);
+            copy.setCopyingBiomes(false);
+            Operations.complete(copy);
+            copied = copy.getAffected();
+            clipboard.flush();
+        }
+
+        try (EditSession pasteSession = WorldEdit.getInstance()
+                .newEditSessionBuilder()
+                .world(weWorld)
+                .maxBlocks(-1)
+                .limitUnlimited()
+                .allowedRegionsEverywhere()
+                .checkMemory(false)
+                .changeSetNull()
+                .build()) {
+            pasteSession.setReorderMode(EditSession.ReorderMode.NONE);
+            pasteSession.setFastMode(true);
+
+            pastedOk = 0;
+            pastedTried = 0;
+            for (int x = xStart; x < xStart + SIZE_X; x++) {
+                for (int y = Y_MIN; y <= Y_MAX; y++) {
+                    int relY = y - Y_MIN;
+                    for (int z = zStart; z < zStart + SIZE_Z; z++) {
+                        int relZ = z - zStart;
+
+                        // +90 around X for 320-sized cube [0..319] in Y/Z
+                        int newY = Y_MIN + (SIZE_Y - 1 - relZ);
+                        int newZ = zStart + relY;
+
+                        BaseBlock block = clipboard.getFullBlock(x, y, z);
+                        pastedTried++;
+                        if (pasteSession.setBlock(x, newY, newZ, block)) {
+                            pastedOk++;
                         }
                     }
                 }
             }
+            pasteSession.flushQueue();
+        } finally {
+            clipboard.close();
+        }
+        return new RotateResult(copied, pastedOk, pastedTried);
+    }
+
+    private static void rotateEntities(World world, CommandSourceStack src, int xStart, int zStart) {
+        BoundingBox box = new BoundingBox(
+                xStart, Y_MIN, zStart,
+                xStart + SIZE_X, Y_MAX + 1, zStart + SIZE_Z);
+        Collection<Entity> toMove = new ArrayList<>(world.getNearbyEntities(box));
+        if (src.getSender() instanceof Player player && !toMove.contains(player)) {
+            toMove.add(player);
         }
 
-        // 3) Пишем обратно, поворачивая +90° вокруг X, и восстанавливаем контейнеры
-        for (int dx = 0; dx < sizeX; dx++) {
-            int bx = xStart + dx;
-            for (int dy = 0; dy <= yMax - yMin; dy++) {
-                for (int dz = 0; dz < sizeZ; dz++) {
-                    int by = yMin + dy;
-                    int bz = zStart + dz;
-
-                    // поворот координат вокруг X
-                    int relY = by - cy;
-                    int relZ = bz - cz;
-                    int newY = cy - relZ;
-                    int newZ = cz + relY;
-
-                    Block dst = world.getBlockAt(bx, newY, newZ);
-                    dst.setBlockData(dataBuf[dx][dy][dz], false);
-
-                    Triple key = new Triple(dx, dy, dz);
-                    if (invMap.containsKey(key)) {
-                        BlockState newState = dst.getState();
-                        if (newState instanceof Container newContainer) {
-                            newContainer.getSnapshotInventory().setContents(invMap.get(key));
-                            // обязательно сохраняем состояние блока в мир
-                            newState.update(true, false);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 4) Телепортируем все сущности (включая игрока) вместе с их пассажирами
-        double pivotX = xStart + halfX + 0.5;
-        double pivotY = cy + 0.5;
-        double pivotZ = cz + 0.5;
-        double radiusX = halfX;
-        double radiusY = (yMax - yMin + 1) / 2.0;
-        double radiusZ = halfZ;
-
-        Collection<Entity> toMove = world.getNearbyEntities(origin, radiusX, radiusY, radiusZ);
-        // добавляем командующий источник, если это игрок
-        if (src.getSender() instanceof Player pl && !toMove.contains(pl)) {
-            toMove.add(pl);
-        }
-
-        // телепорт с флагом RETAIN_PASSENGERS (PaperMC API)
-        for (Entity e : toMove) {
-            Location loc = e.getLocation();
-            double dx = loc.getX() - pivotX;
-            double dy = loc.getY() - pivotY;
-            double dz = loc.getZ() - pivotZ;
-            double fx = pivotX + dx;
-            double fy = pivotY - dz;
-            double fz = pivotZ + dy + 0.5;
-            e.teleport(
-                    new Location(world, fx, fy, fz, loc.getYaw(), loc.getPitch()),
+        double pivotY = Y_MIN + (SIZE_Y / 2.0);
+        double pivotZ = zStart + (SIZE_Z / 2.0);
+        for (Entity entity : toMove) {
+            Location loc = entity.getLocation();
+            double relY = loc.getY() - pivotY;
+            double relZ = loc.getZ() - pivotZ;
+            double newY = pivotY - relZ;
+            double newZ = pivotZ + relY;
+            entity.teleport(
+                    new Location(world, loc.getX(), newY, newZ, loc.getYaw(), loc.getPitch()),
                     EntityState.RETAIN_PASSENGERS,
                     EntityState.RETAIN_VEHICLE);
         }
-
-        // src.getSender().sendPlainMessage("§aКуб 320×320×320 успешно повернут на +90°
-        // вокруг X.");
     }
 
-    // утилитарный record для ключей
-    private record Triple(int x, int y, int z) {
-    }
-
-
-    
-    public boolean isExcludedDimension(World world) {
-        try {
-            Method getHandle = world.getClass().getMethod("getHandle");
-            Object nmsWorld = getHandle.invoke(world);
-            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
-            Object resourceKey = dimMethod.invoke(nmsWorld);
-            Method locMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLoc = locMethod.invoke(resourceKey);
-            Method toString = resourceLoc.getClass().getMethod("toString");
-            String dim = (String) toString.invoke(resourceLoc);
-            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
-        } catch (Exception e) {
-            return false;
+    private static void broadcastRotateWarn() {
+        Component warn = Component.translatable("map_rotate_warn");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(warn);
         }
     }
 
+    private static boolean isExcludedDimension(World world) {
+        String dim = world.getKey().toString();
+        return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
+    }
+
+    private static final class RotateResult {
+        private static final RotateResult EMPTY = new RotateResult(0, 0, 0);
+        private final int copiedBlocks;
+        private final int pastedBlocks;
+        private final int triedPastes;
+
+        private RotateResult(int copiedBlocks, int pastedBlocks, int triedPastes) {
+            this.copiedBlocks = copiedBlocks;
+            this.pastedBlocks = pastedBlocks;
+            this.triedPastes = triedPastes;
+        }
+    }
 }

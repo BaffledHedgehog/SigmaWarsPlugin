@@ -1,7 +1,8 @@
 package me.luckywars.item;
 
-import java.lang.reflect.Method;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,8 +19,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,8 +44,20 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 //import me.luckywars.item.Malevich;
 
 public class RocketArmor implements Listener {
-    private final NamespacedKey itemKey;
-    private final NamespacedKey gliderKey;
+    private final JavaPlugin plugin;
+    private final NamespacedKey pluginItemKey;
+    private final NamespacedKey pluginTypeKey;
+    private final NamespacedKey pluginAdditionalsKey;
+    private final NamespacedKey pluginGliderKey;
+    private final NamespacedKey lwsItemKey = new NamespacedKey("lws", "item");
+    private final NamespacedKey lwsTypeKey = new NamespacedKey("lws", "type");
+    private final NamespacedKey lwsAdditionalsKey = new NamespacedKey("lws", "additionals");
+    private final NamespacedKey lwsGliderKey = new NamespacedKey("lws", "glider");
+    private final NamespacedKey legacyItemKey = new NamespacedKey("lucky_wars", "item");
+    private final NamespacedKey legacyTypeKey = new NamespacedKey("lucky_wars", "type");
+    private final NamespacedKey legacyAdditionalsKey = new NamespacedKey("lucky_wars", "additionals");
+    private final NamespacedKey legacyGliderKey = new NamespacedKey("lucky_wars", "glider");
+    private final NamespacedKey plainAdditionalsKey = new NamespacedKey(NamespacedKey.MINECRAFT, "additionals");
 
     private static final String JUMPS_OBJ_NAME = "rocket_armor_jumps";
     private static final String CD_OBJ_NAME = "rocket_armor_jump_cd";
@@ -55,8 +68,11 @@ public class RocketArmor implements Listener {
     private final Map<UUID, Integer> cooldown = new HashMap<>();
 
     public RocketArmor(JavaPlugin plugin) {
-        this.itemKey = new NamespacedKey(plugin, "item");
-        this.gliderKey = new NamespacedKey(plugin, "glider");
+        this.plugin = plugin;
+        this.pluginItemKey = new NamespacedKey(plugin, "item");
+        this.pluginTypeKey = new NamespacedKey(plugin, "type");
+        this.pluginAdditionalsKey = new NamespacedKey(plugin, "additionals");
+        this.pluginGliderKey = new NamespacedKey(plugin, "glider");
 
         // Periodic task updates stats and ensures objectives exist on each player's
         // scoreboard
@@ -67,66 +83,66 @@ public class RocketArmor implements Listener {
                     if (p.getGameMode() != GameMode.SURVIVAL && p.getGameMode() != GameMode.ADVENTURE) {
                         continue;
                     }
-                    if (!wearsRocketArmor(p)) {
-                        continue;
-                    }
-
-                    UUID id = p.getUniqueId();
-                    jumps.putIfAbsent(id, MAX_JUMPS);
-                    cooldown.putIfAbsent(id, 0);
-
-                    int cd = cooldown.get(id);
-                    if (cd > 0) {
-                        cooldown.put(id, cd - 1);
-                    } else if (jumps.get(id) < MAX_JUMPS) {
-                        jumps.put(id, jumps.get(id) + 1);
-                        if (jumps.get(id) < MAX_JUMPS) {
-                            cooldown.put(id, COOLDOWN_TICKS);
-                        }
-                    }
-
-                    // Use player's own scoreboard to handle dynamic scoreboard changes
-                    Scoreboard sb = p.getScoreboard();
-                    Objective jumpsObj = getOrCreateObjective(sb, JUMPS_OBJ_NAME, "dummy");
-                    Objective cdObj = getOrCreateObjective(sb, CD_OBJ_NAME, "dummy");
-
-                    // Update scores
-                    jumpsObj.getScore(p.getName()).setScore(jumps.get(id));
-                    int secs = (cooldown.get(id) + 19) / 20;
-                    cdObj.getScore(p.getName()).setScore(secs);
+                    tickRocketState(p);
                 }
             }
         }.runTaskTimer(plugin, 1, 1);
     }
 
+    private void tickRocketState(Player player) {
+        UUID id = player.getUniqueId();
+        if (!wearsRocketArmor(player)) {
+            jumps.remove(id);
+            cooldown.remove(id);
+            updateScores(player, 0, 0);
+            return;
+        }
+
+        int currentJumps = jumps.computeIfAbsent(id, ignored -> MAX_JUMPS);
+        int currentCooldown = cooldown.computeIfAbsent(id, ignored -> 0);
+
+        if (currentCooldown > 0) {
+            currentCooldown--;
+        } else if (currentJumps < MAX_JUMPS) {
+            currentJumps++;
+            currentCooldown = (currentJumps < MAX_JUMPS) ? COOLDOWN_TICKS : 0;
+        }
+
+        jumps.put(id, currentJumps);
+        cooldown.put(id, currentCooldown);
+
+        syncBootsGliderComponent(player, currentJumps > 0);
+        updateScores(player, currentJumps, currentCooldown);
+    }
+
+    private void updateScores(Player player, int jumpsValue, int cooldownTicks) {
+        Scoreboard sb = player.getScoreboard();
+        Objective jumpsObj = getOrCreateObjective(sb, JUMPS_OBJ_NAME, "dummy");
+        Objective cdObj = getOrCreateObjective(sb, CD_OBJ_NAME, "dummy");
+        jumpsObj.getScore(player.getName()).setScore(jumpsValue);
+        int secs = (cooldownTicks + 19) / 20;
+        cdObj.getScore(player.getName()).setScore(secs);
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        if ((p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
-                && wearsRocketArmor(p)) {
-            UUID id = p.getUniqueId();
-            jumps.put(id, MAX_JUMPS);
-            cooldown.put(id, 0);
-        }
+        Bukkit.getScheduler().runTask(plugin, () -> tickRocketState(e.getPlayer()));
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
-        Player p = e.getPlayer();
-        UUID id = p.getUniqueId();
-        jumps.put(id, MAX_JUMPS);
-        cooldown.put(id, 0);
+        UUID id = e.getPlayer().getUniqueId();
+        jumps.remove(id);
+        cooldown.remove(id);
     }
 
     @EventHandler
     public void onEquip(PlayerArmorChangeEvent e) {
-        Player p = e.getPlayer();
-        if ((p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE)
-                && !wearsRocketArmor(p)) {
-            UUID id = p.getUniqueId();
-            jumps.put(id, 0);
-            cooldown.put(id, COOLDOWN_TICKS);
+        Player player = e.getPlayer();
+        if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) {
+            return;
         }
+        Bukkit.getScheduler().runTask(plugin, () -> tickRocketState(player));
     }
 
     @EventHandler
@@ -162,14 +178,19 @@ public class RocketArmor implements Listener {
 
         // Apply rocket boost
         UUID id = p.getUniqueId();
-        int rem = jumps.getOrDefault(id, MAX_JUMPS);
+        int rem = jumps.computeIfAbsent(id, ignored -> MAX_JUMPS);
         if (rem <= 0) {
             return;
         }
-        jumps.put(id, rem - 1);
-        if (cooldown.get(id) == 0) {
+        rem--;
+        jumps.put(id, rem);
+
+        int currentCooldown = cooldown.computeIfAbsent(id, ignored -> 0);
+        if (rem < MAX_JUMPS && currentCooldown <= 0) {
             cooldown.put(id, COOLDOWN_TICKS);
         }
+        syncBootsGliderComponent(p, rem > 0);
+        updateScores(p, rem, cooldown.getOrDefault(id, 0));
 
         Vector vel = p.getVelocity();
         Vector dir = p.getLocation().getDirection();
@@ -198,19 +219,11 @@ public class RocketArmor implements Listener {
     }
 
     public boolean isExcludedDimension(World world) {
-        try {
-            Method getHandle = world.getClass().getMethod("getHandle");
-            Object nmsWorld = getHandle.invoke(world);
-            Method dimMethod = nmsWorld.getClass().getMethod("dimension");
-            Object resourceKey = dimMethod.invoke(nmsWorld);
-            Method locMethod = resourceKey.getClass().getMethod("location");
-            Object resourceLoc = locMethod.invoke(resourceKey);
-            Method toString = resourceLoc.getClass().getMethod("toString");
-            String dim = (String) toString.invoke(resourceLoc);
-            return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
-        } catch (Exception e) {
+        if (world == null) {
             return false;
         }
+        String dim = world.getKey().toString();
+        return "minecraft:nexus".equals(dim) || "minecraft:imprinted".equals(dim);
     }
 
     /**
@@ -225,30 +238,99 @@ public class RocketArmor implements Listener {
     }
 
     private boolean wearsRocketArmor(Player p) {
-        return checkPDC(p, itemKey);
+        return isRocketBoots(p.getInventory().getBoots());
     }
 
     private boolean wearsGlider(Player p) {
-        return checkPDC(p, gliderKey);
+        ItemStack boots = p.getInventory().getBoots();
+        return boots != null && boots.hasData(DataComponentTypes.GLIDER);
     }
 
-    private boolean checkPDC(Player p, NamespacedKey key) {
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            ItemStack s;
-            try {
-                s = p.getInventory().getItem(slot);
-            } catch (IllegalArgumentException ex) {
-                continue;
+    private boolean isRocketBoots(ItemStack boots) {
+        if (boots == null || boots.getType().isAir()) {
+            return false;
+        }
+        ItemMeta meta = boots.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        return hasRocketType(pdc, pluginItemKey, pluginTypeKey, pluginAdditionalsKey, plainAdditionalsKey)
+                || hasRocketType(pdc, lwsItemKey, lwsTypeKey, lwsAdditionalsKey, plainAdditionalsKey)
+                || hasRocketType(pdc, legacyItemKey, legacyTypeKey, legacyAdditionalsKey, plainAdditionalsKey)
+                || hasTagContainer(pdc, pluginGliderKey)
+                || hasTagContainer(pdc, lwsGliderKey)
+                || hasTagContainer(pdc, legacyGliderKey);
+    }
+
+    private boolean hasRocketType(
+            PersistentDataContainer root,
+            NamespacedKey itemTagKey,
+            NamespacedKey typeTagKey,
+            NamespacedKey... additionalsKeys) {
+        if (!root.has(itemTagKey, PersistentDataType.TAG_CONTAINER)) {
+            return false;
+        }
+        PersistentDataContainer nested = root.get(itemTagKey, PersistentDataType.TAG_CONTAINER);
+        if (nested == null) {
+            return false;
+        }
+
+        String type = nested.get(typeTagKey, PersistentDataType.STRING);
+        if (isRocketType(type)) {
+            return true;
+        }
+
+        for (NamespacedKey additionalsKey : additionalsKeys) {
+            if (nested.has(additionalsKey, PersistentDataType.LIST.strings())) {
+                List<String> additionals = nested.get(additionalsKey, PersistentDataType.LIST.strings());
+                if (additionals != null) {
+                    for (String value : additionals) {
+                        if (isRocketType(value)) {
+                            return true;
+                        }
+                    }
+                }
             }
-            if (s == null || s.getItemMeta() == null) {
-                continue;
-            }
-            PersistentDataContainer pdc = s.getItemMeta().getPersistentDataContainer();
-            if (pdc.has(key, PersistentDataType.TAG_CONTAINER)) {
-                return true;
+
+            if (nested.has(additionalsKey, PersistentDataType.STRING)) {
+                String single = nested.get(additionalsKey, PersistentDataType.STRING);
+                if (isRocketType(single)) {
+                    return true;
+                }
             }
         }
+
         return false;
+    }
+
+    private boolean isRocketType(String rawType) {
+        if (rawType == null) {
+            return false;
+        }
+        String normalized = rawType.toLowerCase(java.util.Locale.ROOT);
+        return "rocket_armor".equals(normalized) || "rocketarmor".equals(normalized) || "rocket".equals(normalized);
+    }
+
+    private boolean hasTagContainer(PersistentDataContainer root, NamespacedKey key) {
+        return root.has(key, PersistentDataType.TAG_CONTAINER);
+    }
+
+    private void syncBootsGliderComponent(Player player, boolean jumpAvailable) {
+        ItemStack boots = player.getInventory().getBoots();
+        if (!isRocketBoots(boots)) {
+            return;
+        }
+        boolean hasGlider = boots.hasData(DataComponentTypes.GLIDER);
+        if (jumpAvailable == hasGlider) {
+            return;
+        }
+        if (jumpAvailable) {
+            boots.setData(DataComponentTypes.GLIDER);
+        } else {
+            boots.unsetData(DataComponentTypes.GLIDER);
+        }
+        player.getInventory().setBoots(boots);
     }
 
     private boolean hasElytra(Player p) {
