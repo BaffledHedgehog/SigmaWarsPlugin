@@ -27,3 +27,4 @@
 .DS_Store
 Thumbs.db
 *.log
+.settings/org.eclipse.buildship.core.prefs
