@@ -32,3 +32,4 @@ Thumbs.db
 .settings/org.eclipse.buildship.core.prefs
 .gradle/8.14/checksums/checksums.lock
 .gradle/*
+.gradle\*
