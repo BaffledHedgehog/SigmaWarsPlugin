@@ -8,17 +8,19 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class BedwarsRegionManager {
     private final JavaPlugin plugin;
 
-    private UUID worldId = null;
+    private volatile UUID worldId = null;
     private int minX, maxX, minZ, maxZ;
-    private boolean enabled = false;
+    private volatile boolean enabled = false;
 
     // Снимок типов блоков (только НЕ-воздух)
-    private final Map<Long, Material> snapshot = new HashMap<>();
+    private final Map<Long, Material> snapshot = new ConcurrentHashMap<>();
 
     public BedwarsRegionManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -88,6 +90,10 @@ public final class BedwarsRegionManager {
 
     public boolean isSnapshottedCoord(int x, int y, int z) {
         return enabled && snapshot.containsKey(pack(x, y, z));
+    }
+
+    public boolean isWorld(World world) {
+        return enabled && world != null && worldId != null && world.getUID().equals(worldId);
     }
 
     public Material originalTypeAt(Block b) {

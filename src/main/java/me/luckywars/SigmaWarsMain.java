@@ -234,6 +234,7 @@ public class SigmaWarsMain extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 1L, 5L);
 
         RotateMapService.register(getLifecycleManager(), this);
+        MagmifyService.register(getLifecycleManager(), this);
 
     }
 

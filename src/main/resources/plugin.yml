@@ -16,6 +16,10 @@ commands:
     description: "Повернуть куб 320×320×320 вокруг X"
     usage: "/rotatemap"
     permission: rotatemap.use
+  magmify:
+    description: "Transform connected non-air structure near execute position"
+    usage: "/magmify"
+    permission: magmify.use
   regen:
     description: Управление регенерацией
     usage: /regen <add|set|multiple> <value> <selector> [duration, 0 for infinite]
@@ -48,6 +52,9 @@ permissions:
     default: op
   rotatemap.use:
     description: "Позволяет использовать команду /rotatemap"
+    default: op
+  magmify.use:
+    description: "Allows using /magmify"
     default: op
   sigmawars.motion:
     default: op

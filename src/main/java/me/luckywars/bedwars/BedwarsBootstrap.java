@@ -12,10 +12,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class BedwarsBootstrap {
+    private static volatile BedwarsRegionManager activeRegionManager;
 
     public static void bootstrap(JavaPlugin plugin) {
         // 1) Менеджер зоны/снимка
         BedwarsRegionManager regionManager = new BedwarsRegionManager(plugin);
+        activeRegionManager = regionManager;
 
         // 2) Подключаемся к Ignite-моду с миксинами (рефлексией)
         hookBedwarsMixins(regionManager, true /* debug */);
@@ -80,5 +82,9 @@ public final class BedwarsBootstrap {
     }
 
     private BedwarsBootstrap() {
+    }
+
+    public static BedwarsRegionManager regionManager() {
+        return activeRegionManager;
     }
 }
